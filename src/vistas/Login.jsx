@@ -33,28 +33,28 @@ const Login = () => {
                 setMostrarMensaje(true);
                 //Pasados los segundos que le digamos pasamos a la siguiente vista en este caso en 3 segundos
                 setTimeout(() => {
-                    navigate('/admin');
+                    navigate('/administrador');
                 }, 3000);
             } else if (perfil === 2) {
                 setMensaje('✅ Login correcto');
                 setTipoMensaje('ok');
                 setMostrarMensaje(true);
                 setTimeout(() => {
-                    navigate('/tecnico')
+                    navigate('/tecnico/tickets')
                 }, 3000);
             } else if (perfil === 3) {
                 setMensaje('✅ Login correcto');
                 setTipoMensaje('ok');
                 setMostrarMensaje(true);
                 setTimeout(() => {
-                    navigate('/agente')
+                    navigate('/agente/tickets')
                 }, 3000)
             } else if (perfil === 4) {
                 setMensaje('✅ Login correcto');
                 setTipoMensaje('ok');
                 setMostrarMensaje(true);
                 setTimeout(() => {
-                    navigate('/solicitante')
+                    navigate('/solicitante/tickets')
                 }, 3000)
             }
 
