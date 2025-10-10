@@ -1,0 +1,6 @@
+.navbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1050; /* por encima del offcanvas */
+  background-color: #212529; /* igual que bg-dark de Bootstrap */
+}
