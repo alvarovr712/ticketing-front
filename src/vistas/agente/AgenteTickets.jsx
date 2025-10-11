@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { obtenerTodosLosTickets } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
+import { Link } from "react-router-dom";
 
 const AgenteTickets = () => {
 
@@ -20,7 +21,13 @@ const AgenteTickets = () => {
 
     const columnas = [
         { key: "id", label: "ID" },
-        { key: "asunto", label: "Asunto" },
+        { key: "asunto", label: "Asunto",
+            render: (valor,fila) =>(
+                <Link to={`${fila.id}`} style = {{color:"black", textDecoration:"none", fontWeight:"bold"}}>
+                    {valor}
+                </Link>
+            )
+         },
         {
             key: "estadoTicket",
             label: "Estado",
@@ -29,7 +36,22 @@ const AgenteTickets = () => {
                 return <span className={clase}>{valor}</span>;
             }
         },
-        { key: "prioridad", label: "Prioridad" },
+        {
+            key: "urgencia",
+            label: "Urgencia",
+            render: (valor) => {
+                const clase = `urgencia-ticket urgencia-${valor.toLowerCase()}`;
+                return <span className={clase}>{valor}</span>;
+            }
+        },
+        {
+            key: "prioridad",
+            label: "Prioridad",
+            render: (valor) => {
+                const clase = `prioridad-ticket prioridad-${valor.trim().toLowerCase()}`;
+                return <span className={clase}>{valor}</span>;
+            }
+        },
         {
             key: "fechaCreacion",
             label: "Fecha",

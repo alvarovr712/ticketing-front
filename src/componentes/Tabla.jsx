@@ -5,7 +5,7 @@ import '../estilos/Tabla.css';
 
 const Tabla = ({ datos, columnas }) => {
     return (
-        <table className="tabla-pedidos">
+        <table className="tabla">
             <thead>
                 <tr>
                     {columnas.map(col => <th key={col.key}>{col.label}</th>)}

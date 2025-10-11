@@ -6,6 +6,7 @@ import Agente from './vistas/agente/Agente';
 import Solicitante from './vistas/solicitante/Solicitante';
 import Tecnico from "./vistas/tecnico/Tecnico";
 import AgenteTickets from "./vistas/agente/AgenteTickets";
+import DetallesTicket from "./vistas/agente/DetallesTicket";
 
 
 
@@ -18,7 +19,8 @@ function App() {
       <Route path="/administrador" element={<Administrador />} />
       <Route path="/agente" element={<Agente />}>
         <Route path="tickets" element={<AgenteTickets />} />
-        <Route index element={<AgenteTickets />} /> {/* opcional: carga tabla al entrar en /agente */}
+        <Route index element={<AgenteTickets />} />
+        <Route path="tickets/:id" element={<DetallesTicket/>}/> 
       </Route>
       <Route path='/solicitante/tickets' element={<Solicitante />} />
       <Route path='/tecnico/tickets' element={<Tecnico />} />

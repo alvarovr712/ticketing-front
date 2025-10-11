@@ -15,3 +15,18 @@ export const obtenerTodosLosTickets = async(token) => {
     return await respuesta.json();
 }
 
+export const obtenerUnTicket = async(token,id) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    if(!respuesta.ok) {
+        throw new Error('Error al obtener el ticket');
+    }   
+    return await respuesta.json();
+}
+
