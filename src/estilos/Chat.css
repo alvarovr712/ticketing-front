@@ -1,28 +1,96 @@
+
+
 .mensaje {
   width: 100%;
   padding: 12px 16px;
   margin-bottom: 12px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #0fcc48;
   border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.mensaje.agente {
-  background-color: #e1f5fe; /* azul claro */
-}
-
-.mensaje.solicitante {
-  background-color: #fce4ec; /* rosa claro */
+  background-color: #5c636a;
+ 
 }
 
 .mensaje .cabecera {
   font-size: 14px;
-  color: #6c757d;
+  color: #ffffff;
   margin-bottom: 6px;
 }
 
 .mensaje .contenido {
   font-size: 15px;
-  color: #212529;
+  color: #ffffff;
 }
+
+/* Estilos para botones editar y borrar */
+
+.acciones-mensaje {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.btn-accion {
+  background: none;
+  border: none;
+  color: #007bff;
+  padding: 0 6px;
+  cursor: pointer;
+}
+
+.btn-accion:hover {
+  text-decoration: underline;
+}
+
+/*Estilos para los detalles del ticket*/
+.ticket-detalles {
+  background-color: #5c636a; 
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.ticket-detalles h5,
+.ticket-detalles p,
+.ticket-detalles label,
+.ticket-detalles span {
+  color: #ffffff;
+}
+
+.ticket-detalles select {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: 1px solid #0fcc48;
+}
+
+
+@media (max-width: 768px) {
+  .ticket-detalles {
+    margin-bottom: 1rem;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+  }
+}
+
+/*Contenedor de descripcion*/
+.ticket-descripcion {
+  background-color: #5c636a;
+  border: 1px solid #0fcc48;
+  border-radius: 6px;
+  padding: 1rem;
+  color: white;
+}
+
+/*Tabs*/
+
+
+.ticket-tabs .nav-link.active {
+  border-color: #0fcc48;
+  color: #212529;
+  border-radius: 4px;
+}
+
+
+
 
