@@ -27,55 +27,32 @@ const Login = () => {
             localStorage.setItem('perfil', datos.id_perfil);
             localStorage.setItem('email', datos.email);
 
-            if (perfil === 1) {
-                setMensaje('✅ Login correcto');
-                setTipoMensaje('ok');
-                setMostrarMensaje(true);
-                //Pasados los segundos que le digamos pasamos a la siguiente vista en este caso en 3 segundos
-                setTimeout(() => {
-                    navigate('/administrador');
-                }, 3000);
-            } else if (perfil === 2) {
-                setMensaje('✅ Login correcto');
-                setTipoMensaje('ok');
-                setMostrarMensaje(true);
-                setTimeout(() => {
-                    navigate('/tecnico/tickets')
-                }, 3000);
-            } else if (perfil === 3) {
-                setMensaje('✅ Login correcto');
-                setTipoMensaje('ok');
-                setMostrarMensaje(true);
-                setTimeout(() => {
-                    navigate('/agente/tickets')
-                }, 3000)
-            } else if (perfil === 4) {
-                setMensaje('✅ Login correcto');
-                setTipoMensaje('ok');
-                setMostrarMensaje(true);
-                setTimeout(() => {
-                    navigate('/solicitante/tickets')
-                }, 3000)
-            }
+            setMensaje('✅ Login correcto');
+            setTipoMensaje('ok');
+            setMostrarMensaje(true);
 
+            setTimeout(() => {
+                if (perfil === 1) navigate('/administrador');
+                else if (perfil === 2) navigate('/tecnico/tickets');
+                else if (perfil === 3) navigate('/agente/tickets');
+                else if (perfil === 4) navigate('/solicitante/tickets');
+            }, 2000);
         } catch {
             setMensaje('❌ Email o contraseña incorrectos');
             setTipoMensaje('error');
             setMostrarMensaje(true);
-
-        }
-    }
+     }
+  };
 
     return (
-
-
 
         <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
-            backgroundColor: '#f5f5f5'
+            background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+            fontFamily: "'Poppins', sans-serif"
         }}>
             <div style={{
                 backgroundColor: 'white',
@@ -83,10 +60,30 @@ const Login = () => {
                 borderRadius: '1rem',
                 boxShadow: '0 0 30px rgba(11, 235, 149, 0.1)',
                 width: '30rem',
+                transition: 'transform 0.3s ease-in-out'
 
             }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Iniciar sesión</h2>
+                <h1 style={{
+                textAlign: 'center',
+                marginBottom: '1rem',
+                color: '#6a11cb',
+                fontSize: '2rem',
+                letterSpacing: '1px'
+             }}>
+              🎟️ Helpdesk
+             </h1>
 
+              <p style={{
+                 textAlign: 'center',
+                 color: '#555',
+                 marginBottom: '2rem',
+                 fontSize: '1rem'
+             }}>
+          Accede a tu cuenta para gestionar tus tickets
+         </p>
+
+
+               
                 {/* El onChange captura el valor que el usuario escribe y lo guarda en el estado */}
                 <input
                     type="text"
@@ -99,8 +96,12 @@ const Login = () => {
                         padding: '0.6rem',
                         fontSize: '1rem',
                         border: '1px solid black',
-                        borderRadius: '0.5rem'
+                        borderRadius: '0.5rem',
+                        outline: 'none',
+                        transition: 'all 0.2s ease-in-out'
                     }}
+                    onFocus={e => e.target.style.border = '1px solid #6a11cb'}
+                    onBlur={e => e.target.style.border = '1px solid #ccc'}
                 />
 
                 <input
@@ -116,6 +117,8 @@ const Login = () => {
                         border: '1px solid black',
                         borderRadius: '0.5rem'
                     }}
+                    onFocus={e => e.target.style.border = '1px solid #6a11cb'}
+                    onBlur={e => e.target.style.border = '1px solid #ccc'}
                 />
 
                 {mostrarMensaje && (
@@ -178,10 +181,14 @@ const Login = () => {
                         borderRadius: '0.5rem',
                         fontSize: '1.5rem',
                         display: 'block',
+                        fontSize: '1.2rem',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s ease, transform 0.2s ease'
+
 
                     }}
                 >
-                    Iniciar
+                    Iniciar sesión
                 </button>
                 
             </div>
