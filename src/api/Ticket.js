@@ -47,3 +47,19 @@ export const obtenerTodosGrupos = async(token) => {
     return await respuesta.json();
 }
 
+// ------ EDITAR UN TICKET ------
+export const editarTicket = async(token, id,datosTicket) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/editar/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(datosTicket)
+    });
+    if(!respuesta.ok) {
+        throw new Error('Error al editar el ticket');
+    }
+    return await respuesta.json(); 
+}
+
