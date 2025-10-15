@@ -11,7 +11,7 @@ const Usuarios = () => {
 		const token = localStorage.getItem('token');
 
 		getUsuarios(token)
-		.then(({usuarios}) => {
+		.then((usuarios) => {
 			setUsuarios(usuarios);
 		})
 		.catch(err => console.log(err)); 
