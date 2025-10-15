@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:8080";
 
 export const getUsuarios =  async (token) => {
-	const response = await fetch(`${BASE_URL}/usuarios`, {
+	const response = await fetch(`${BASE_URL}/usuario/`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
