@@ -26,5 +26,28 @@ export const editarAnotacion = async (token, id, descripcion) => {
     if (!respuesta.ok) {
         throw new Error('Error al editar la anotación');
     }
+
+}
+
+export const crearAnotacion = async (token, descripcion, visibilidadTicket,id_ticket) =>{
+    const anotacion = {
+        descripcion,
+        visibilidadTicket,
+        ticket: {
+            id: id_ticket
+        }
+    }
+    const respuesta = await fetch(`${BASE_URL}/anotacion/crear`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(anotacion)
+    });
+    if (!respuesta.ok) {
+        throw new Error('Error al crear la anotación');
+
+    }
     
 }

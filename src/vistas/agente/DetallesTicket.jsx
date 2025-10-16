@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { editarTicket, obtenerTodosGrupos, obtenerUnTicket } from "../../api/Ticket";
 import { useParams } from "react-router-dom";
 import "../../estilos/DetallesTicket.css"
-import { borrarAnotacion, editarAnotacion } from "../../api/Anotacion";
+import { borrarAnotacion, crearAnotacion, editarAnotacion } from "../../api/Anotacion";
 
 const DetallesTicket = () => {
 
@@ -21,9 +21,13 @@ const DetallesTicket = () => {
     //UseState usado para hacer tab el box para escribir mensajes y poder cambiar entre publico y privado
 
     const [tipoMensaje, setTipoMensaje] = useState("publico");
-
+    //UseState usados para editar mensajes
     const [id_anotacion, setId_anotacion] = useState(null);
     const [descripcion, setDescripcion] = useState("");
+    //UseState usados para crear mensajes
+    const [visibilidadTicket, setVisibilidadTicket] = useState(1);
+    const [descripcionMensaje, setDescripcionMensaje] = useState("");
+
 
 
 
@@ -122,6 +126,18 @@ const DetallesTicket = () => {
         }
     };
 
+    //CREAR MENSAJE VISIBLE
+    const crearMensaje = async (descripcion, visibilidadTicket, id_ticket) => {
+        const token = localStorage.getItem('token');
+        try {
+            await crearAnotacion(token, descripcion, visibilidadTicket, id_ticket);
+            cargarTicket();
+        } catch (error) {
+            console.error("Error real al crear mensaje visible:", error);
+            setError("Error al crear la anotación");
+        }
+    }
+
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
 
@@ -186,23 +202,25 @@ const DetallesTicket = () => {
                     </ul>
                     {/*Mensaje y actividad (tabs)*/}
                     {vistaActiva === "mensajes" ? (
-                        <div className="flex-grow-1 overflow-auto " style={{ backgroundColor: "#f8f9fa" }}>
+                        <div className="flex-grow-1 overflow-auto contenedor-mensajes">
 
-                            {ticket.anotaciones.map((anotacion, index) => {
-                                const perfil = anotacion.usuario.perfil.nombre
-                                const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
-                                const clase = anotacion.visibilidadTicket === 0 ? "privado" : "publico";
-                                const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
-                                    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-                                });
+                            {[...ticket.anotaciones]
+                                .sort((a, b) => a.id - b.id)
+                                .map((anotacion, index) => {
+                                    const perfil = anotacion.usuario.perfil.nombre
+                                    const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
+                                    const clase = anotacion.visibilidadTicket === 0 ? "privado" : "publico";
+                                    const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
+                                        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                                    });
 
-                                return (
-                                    <div key={index} className={`mensaje ${clase}`}>
-                                        <div className="cabecera">
-                                            <strong>{nombre}</strong> - {perfil} , {fecha}
-                                        </div>
-                                        <div className="contenido">
+                                    return (
+                                        <div key={index} className={`mensaje ${clase}`}>
+                                            <div className="cabecera">
+                                                <strong>{nombre}</strong> - {perfil} , {fecha}
+                                            </div>
                                             <div className="contenido">
+
                                                 {id_anotacion === anotacion.id ? (
                                                     <div className="edicion-mensaje">
                                                         <textarea
@@ -219,17 +237,16 @@ const DetallesTicket = () => {
                                                 ) : (
                                                     <p>{anotacion.descripcion}</p>
                                                 )}
-                                            </div>
 
+                                            </div>
+                                            {/* Botones para editar y borrar cada mensaje */}
+                                            <div className="acciones-mensaje">
+                                                <button className="btn-accion" onClick={() => activarEdicion(anotacion)}>Editar</button>
+                                                <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
+                                            </div>
                                         </div>
-                                        {/* Botones para editar y borrar cada mensaje */}
-                                        <div className="acciones-mensaje">
-                                            <button className="btn-accion" onClick={() => activarEdicion(anotacion)}>Editar</button>
-                                            <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
 
 
                         </div>
@@ -265,12 +282,16 @@ const DetallesTicket = () => {
                         {/* Tabs para mensajes publicos o privados */}
                         <ul className="nav nav-tabs mb-2">
                             <li className="nav-item">
-                                <span className="nav-link active" style={{ cursor: "pointer" }}>
+                                <span className="nav-link active"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => setVisibilidadTicket(1)}>
                                     Público
                                 </span>
                             </li>
                             <li className="nav-item">
-                                <span className="nav-link" style={{ cursor: "pointer" }}>
+                                <span className={`nav-link ${visibilidadTicket === 0 ? "active" : ""} ${!ticket.grupo ? "disabled text-muted" : ""}`}
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => setVisibilidadTicket(0)}>
                                     Privado
                                 </span>
                             </li>
@@ -282,12 +303,15 @@ const DetallesTicket = () => {
                             rows="3"
                             placeholder="Escribe un mensaje..."
                             style={{ resize: "none" }}
+                            value={descripcionMensaje}
+                            onChange={(e) => setDescripcionMensaje(e.target.value)}
                         ></textarea>
 
                         <div className="text-center">
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-success"
                                 style={{ maxWidth: "200px", width: "100%" }}
+                                onClick={() => crearMensaje(descripcionMensaje, visibilidadTicket, ticket.id,)}
                             >
                                 Enviar
                             </button>
