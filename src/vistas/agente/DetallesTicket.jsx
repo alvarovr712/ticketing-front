@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { editarTicket, obtenerTodosGrupos, obtenerUnTicket } from "../../api/Ticket";
 import { useParams } from "react-router-dom";
 import "../../estilos/DetallesTicket.css"
-import { borrarAnotacion } from "../../api/Anotacion";
+import { borrarAnotacion, editarAnotacion } from "../../api/Anotacion";
 
 const DetallesTicket = () => {
 
@@ -22,32 +22,33 @@ const DetallesTicket = () => {
 
     const [tipoMensaje, setTipoMensaje] = useState("publico");
 
+    const [id_anotacion, setId_anotacion] = useState(null);
+    const [descripcion, setDescripcion] = useState("");
 
 
 
+
+
+    const cargarTicket = () => {
+        const token = localStorage.getItem('token');
+        obtenerUnTicket(token, id)
+            .then(datos => {
+                datos.anotaciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+                setTickets(datos);
+                setUrgencia((datos.urgencia || "").toLowerCase());
+                setImpacto((datos.impacto || "").toLowerCase());
+                setPrioridad((datos.prioridad || "").toLowerCase());
+                setGrupo(datos.grupo || "");
+            })
+            .catch(error => setError(error.message));
+    };
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
-        const cargarTicket = () => {
-            obtenerUnTicket(token, id)
-                .then(datos => {
-                    datos.anotaciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-                    setTickets(datos);
-                    setUrgencia((datos.urgencia || "").toLowerCase());
-                    setImpacto((datos.impacto || "").toLowerCase());
-                    setPrioridad((datos.prioridad || "").toLowerCase());
-                    setGrupo(datos.grupo || "");
-                })
-                .catch(error => setError(error.message));
-        };
-
         cargarTicket();
-
         const intervalo = setInterval(cargarTicket, 2000);
-
         return () => clearInterval(intervalo);
     }, [id]);
+
 
 
     //OBTENER TODOS LOS GRUPOS
@@ -84,6 +85,7 @@ const DetallesTicket = () => {
         }
     }
 
+
     //ELIMINAR MENSAJE
 
     const EliminarMensaje = async (id) => {
@@ -96,10 +98,34 @@ const DetallesTicket = () => {
         }
     }
 
+
+    // FUNCIONES PARA EDITAR MENSAJE ActivarEdicion , cancelarEdicion y guardarEdicion
+
+    const activarEdicion = (anotacion) => {
+        setId_anotacion(anotacion.id);
+        setDescripcion(anotacion.descripcion);
+    };
+
+    const cancelarEdicion = () => {
+        setId_anotacion(null);
+        setDescripcion("");
+    };
+    const guardarEdicion = async (anotacion) => {
+        const token = localStorage.getItem('token');
+        try {
+            await editarAnotacion(token, anotacion.id, descripcion);
+            cargarTicket();
+            cancelarEdicion();
+        } catch (error) {
+            console.error("Error real al editar:", error);
+            setError("Error al editar la anotación");
+        }
+    };
+
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
 
-    console.log("Urgencia actual:", urgencia);
+
 
 
 
@@ -176,11 +202,29 @@ const DetallesTicket = () => {
                                             <strong>{nombre}</strong> - {perfil} , {fecha}
                                         </div>
                                         <div className="contenido">
-                                            {anotacion.descripcion}
+                                            <div className="contenido">
+                                                {id_anotacion === anotacion.id ? (
+                                                    <div className="edicion-mensaje">
+                                                        <textarea
+                                                            value={descripcion}
+                                                            onChange={(e) => setDescripcion(e.target.value)}
+                                                            rows={3}
+                                                            className="textarea-edicion"
+                                                        />
+                                                        <div className="acciones-edicion">
+                                                            <button className="btn-accion" onClick={() => guardarEdicion(anotacion)}>Guardar</button>
+                                                            <button className="btn-accion" onClick={cancelarEdicion}>Cancelar</button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <p>{anotacion.descripcion}</p>
+                                                )}
+                                            </div>
+
                                         </div>
                                         {/* Botones para editar y borrar cada mensaje */}
                                         <div className="acciones-mensaje">
-                                            <button className="btn-accion">Editar</button>
+                                            <button className="btn-accion" onClick={() => activarEdicion(anotacion)}>Editar</button>
                                             <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
                                         </div>
                                     </div>

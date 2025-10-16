@@ -91,6 +91,16 @@
   border-radius: 4px;
 }
 
+/*El textarea de edicion*/
+.textarea-edicion {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical; /* permite cambiar la altura pero no el ancho */
+  padding: 8px;
+  font-size: 14px;
+}
+
+
 
 
 
