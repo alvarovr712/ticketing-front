@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { editarTicket, obtenerTodosGrupos, obtenerUnTicket } from "../../api/Ticket";
 import { useParams } from "react-router-dom";
-import "../../estilos/Chat.css"
+import "../../estilos/DetallesTicket.css"
 import { borrarAnotacion } from "../../api/Anotacion";
 
 const DetallesTicket = () => {
@@ -17,6 +17,10 @@ const DetallesTicket = () => {
     const [prioridad, setPrioridad] = useState("");
     const [grupo, setGrupo] = useState("");
     const [listagrupos, setListagrupos] = useState([])
+
+    //UseState usado para hacer tab el box para escribir mensajes y poder cambiar entre publico y privado
+
+    const [tipoMensaje, setTipoMensaje] = useState("publico");
 
 
 
@@ -102,14 +106,37 @@ const DetallesTicket = () => {
     return (
 
         <div className="container mt-4">
-            <div className="row">
-
+            <div className="row d-flex">
                 <div className="col-md-8 d-flex flex-column" style={{ height: "90vh" }}>
+
                     {/*Descripcion del ticket*/}
-                    <div className="ticket-descripcion mb-2" style={{ height: "15vh" }}>
+                    <div className="ticket-descripcion mb-2">
+                        {/* Asunto y Fecha de creación */}
+                        <div className="row mb-2">
+                            <div className="col-12 col-md-6">
+                                <h5>
+                                    <strong>Asunto:</strong> <span className="fw-normal ms-2">{ticket.asunto}</span>
+                                </h5>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <h5>
+                                    <strong>Fecha de creación:</strong> <span className="fw-normal ms-2">{new Date(ticket.fechaCreacion).toLocaleString("es-ES", {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit"
+                                    })}h</span>
+                                </h5>
+                            </div>
+                        </div>
+
+                        {/* Descripción */}
                         <h5><strong>Descripción:</strong></h5>
                         <p>{ticket.descripcion}</p>
                     </div>
+
+
                     {/*tabs para cambiar entre mensaje y actividad*/}
                     <ul className="nav nav-tabs ticket-tabs ">
                         <li className="nav-item">
@@ -134,32 +161,32 @@ const DetallesTicket = () => {
                     {/*Mensaje y actividad (tabs)*/}
                     {vistaActiva === "mensajes" ? (
                         <div className="flex-grow-1 overflow-auto " style={{ backgroundColor: "#f8f9fa" }}>
-                            <div className="flex-grow-1 overflow-auto  mb-2" style={{ backgroundColor: "#f8f9fa" }}>
-                                {ticket.anotaciones.map((anotacion, index) => {
-                                    const perfil = anotacion.usuario.perfil.nombre
-                                    const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
-                                    const clase = anotacion.visibilidadTicket === 0 ? "privado" : "publico";
-                                    const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
-                                        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-                                    });
 
-                                    return (
-                                        <div key={index} className={`mensaje ${clase}`}>
-                                            <div className="cabecera">
-                                                <strong>{nombre}</strong> - {perfil} , {fecha}
-                                            </div>
-                                            <div className="contenido">
-                                                {anotacion.descripcion}
-                                            </div>
-                                            {/* Botones para editar y borrar cada mensaje */}
-                                            <div className="acciones-mensaje">
-                                                <button className="btn-accion">Editar</button>
-                                                <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
-                                            </div>
+                            {ticket.anotaciones.map((anotacion, index) => {
+                                const perfil = anotacion.usuario.perfil.nombre
+                                const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
+                                const clase = anotacion.visibilidadTicket === 0 ? "privado" : "publico";
+                                const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
+                                    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+                                });
+
+                                return (
+                                    <div key={index} className={`mensaje ${clase}`}>
+                                        <div className="cabecera">
+                                            <strong>{nombre}</strong> - {perfil} , {fecha}
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                        <div className="contenido">
+                                            {anotacion.descripcion}
+                                        </div>
+                                        {/* Botones para editar y borrar cada mensaje */}
+                                        <div className="acciones-mensaje">
+                                            <button className="btn-accion">Editar</button>
+                                            <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
 
                         </div>
                     ) : (
@@ -190,42 +217,44 @@ const DetallesTicket = () => {
                         </div>
                     )}
 
-                    <div className="d-flex">
+                    <div className="d-flex flex-column ">
+                        {/* Tabs para mensajes publicos o privados */}
+                        <ul className="nav nav-tabs mb-2">
+                            <li className="nav-item">
+                                <span className="nav-link active" style={{ cursor: "pointer" }}>
+                                    Público
+                                </span>
+                            </li>
+                            <li className="nav-item">
+                                <span className="nav-link" style={{ cursor: "pointer" }}>
+                                    Privado
+                                </span>
+                            </li>
+                        </ul>
+
                         {/* Textarea */}
                         <textarea
-                            className="form-control me-3"
+                            className="form-control mb-2"
                             rows="3"
                             placeholder="Escribe un mensaje..."
                             style={{ resize: "none" }}
                         ></textarea>
 
-                        {/* Botones en columna */}
-                        <div className="d-flex flex-column">
-                            <button className="btn btn-primary mb-2">Enviar</button>
-                            <button className="btn btn-danger">Privado</button>
+                        <div className="text-center">
+                            <button
+                                className="btn btn-primary"
+                                style={{ maxWidth: "200px", width: "100%" }}
+                            >
+                                Enviar
+                            </button>
                         </div>
                     </div>
-
-
                 </div>
 
                 {/*Columna derecha */}
                 <div className="col-md-4 ticket-detalles">
                     <h2 style={{ textAlign: "center" }}>Detalles del ticket</h2>
                     <br />
-                    <div className="d-flex justify-content-between align-items-center">
-                        <h5>
-                            <strong>Asunto:</strong> <span className="fw-normal ms-2">{ticket.asunto}</span>
-                        </h5>
-                    </div>
-                    <br />
-                    <div className="d-flex justify-content-between align-items-center">
-                        <h5>
-                            <strong>Fecha de creación:</strong><span className="fw-normal ms-2 ">{ticket.fechaCreacion}</span>
-                        </h5>
-
-                    </div>
-
                     <div className="mt-4">
                         {/* Urgencia */}
                         <div className="mb-3">

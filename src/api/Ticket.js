@@ -1,6 +1,6 @@
 const BASE_URL = "http://localhost:8080";
 
-// -------OBTENER TODOS LOS TICKETS -------
+// -------OBTENER TODOS LOS TICKETS QUE NO TENGAN ESTADO RESUELTO O CERRADO-------
 export const obtenerTodosLosTickets = async(token) => {
     const respuesta = await fetch(`${BASE_URL}/ticket`, {
         method: 'GET',

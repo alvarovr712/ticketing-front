@@ -47,7 +47,7 @@
   color: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
-  margin-top: 2rem;
+  border: 1px solid #0fcc48;
   transition: all 0.3s ease-in-out;
 }
 
@@ -64,14 +64,14 @@
   border: 1px solid #0fcc48;
 }
 
-
+/*Con esto consigo que en pantallas pequeñas cuando la parte de la derecha pase abajo haya un espaciado entre el boton enviar y la parte de abajo*/
 @media (max-width: 768px) {
   .ticket-detalles {
-    margin-bottom: 1rem;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-    padding: 1rem;
+    margin-top: 2rem !important;
   }
 }
+
+
 
 /*Contenedor de descripcion*/
 .ticket-descripcion {

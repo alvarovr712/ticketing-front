@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUsuario } from "../api/Login";
+import "../estilos/Login.css"
 
 const Login = () => {
 
@@ -41,127 +42,39 @@ const Login = () => {
             setMensaje('❌ Email o contraseña incorrectos');
             setTipoMensaje('error');
             setMostrarMensaje(true);
-     }
-  };
+        }
+    };
 
     return (
+        <div className="vh-100 d-flex justify-content-center align-items-center fondo-login">
+            <div className="bg-white p-5 rounded shadow login-card">
+                <h1 className="text-center text-primary mb-3 fs-2">🎟️ Helpdesk</h1>
+                <p className="text-center text-muted mb-4">
+                    Accede a tu cuenta para gestionar tus tickets
+                </p>
 
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-            fontFamily: "'Poppins', sans-serif"
-        }}>
-            <div style={{
-                backgroundColor: 'white',
-                padding: '3rem',
-                borderRadius: '1rem',
-                boxShadow: '0 0 30px rgba(11, 235, 149, 0.1)',
-                width: '30rem',
-                transition: 'transform 0.3s ease-in-out'
-
-            }}>
-                <h1 style={{
-                textAlign: 'center',
-                marginBottom: '1rem',
-                color: '#6a11cb',
-                fontSize: '2rem',
-                letterSpacing: '1px'
-             }}>
-              🎟️ Helpdesk
-             </h1>
-
-              <p style={{
-                 textAlign: 'center',
-                 color: '#555',
-                 marginBottom: '2rem',
-                 fontSize: '1rem'
-             }}>
-          Accede a tu cuenta para gestionar tus tickets
-         </p>
-
-
-               
-                {/* El onChange captura el valor que el usuario escribe y lo guarda en el estado */}
                 <input
-                    type="text"
+                    type="email"
+                    className="form-control mb-3"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Email"
-                    style={{
-                        width: '100%',
-                        marginBottom: '1rem',
-                        padding: '0.6rem',
-                        fontSize: '1rem',
-                        border: '1px solid black',
-                        borderRadius: '0.5rem',
-                        outline: 'none',
-                        transition: 'all 0.2s ease-in-out'
-                    }}
-                    onFocus={e => e.target.style.border = '1px solid #6a11cb'}
-                    onBlur={e => e.target.style.border = '1px solid #ccc'}
                 />
 
                 <input
                     type="password"
+                    className="form-control mb-4"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Contraseña"
-                    style={{
-                        width: '100%',
-                        marginBottom: '1.5rem',
-                        padding: '0.6rem',
-                        fontSize: '1rem',
-                        border: '1px solid black',
-                        borderRadius: '0.5rem'
-                    }}
-                    onFocus={e => e.target.style.border = '1px solid #6a11cb'}
-                    onBlur={e => e.target.style.border = '1px solid #ccc'}
                 />
 
                 {mostrarMensaje && (
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100vw',
-                        height: '100vh',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 9999
-                    }}>
-                        <div style={{
-                            backgroundColor: 'white',
-                            padding: '2rem',
-                            borderRadius: '1rem',
-                            boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-                            textAlign: 'center',
-                            maxWidth: '20rem',
-                            fontSize: '1.1rem',
-                            color: tipoMensaje === 'ok' ? '#155724' : '#721c24',
-                            border: `2px solid ${tipoMensaje === 'ok' ? '#c3e6cb' : '#f5c6cb'}`,
-                            background: tipoMensaje === 'ok' ? '#d4edda' : '#f8d7da'
-                        }}>
+                    <div className="modal-backdrop d-flex justify-content-center align-items-center">
+                        <div className={`alert ${tipoMensaje === 'ok' ? 'alert-success' : 'alert-danger'} text-center p-4 rounded`}>
                             <p>{mensaje}</p>
-
                             {tipoMensaje === 'error' && (
-                                <button
-                                    onClick={() => setMostrarMensaje(false)}
-                                    style={{
-                                        marginTop: '1rem',
-                                        padding: '0.5rem 1.2rem',
-                                        backgroundColor: '#721c24',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '0.4rem',
-                                        fontSize: '1rem',
-                                        cursor: 'pointer'
-                                    }}
-                                >
+                                <button className="btn btn-danger mt-3" onClick={() => setMostrarMensaje(false)}>
                                     Aceptar
                                 </button>
                             )}
@@ -169,31 +82,13 @@ const Login = () => {
                     </div>
                 )}
 
-
-                <button
-                    onClick={iniciarSesion}
-                    style={{
-                        width: '100%',
-                        padding: '0.6rem',
-                        backgroundColor: 'purple',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '0.5rem',
-                        fontSize: '1.5rem',
-                        display: 'block',
-                        fontSize: '1.2rem',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.3s ease, transform 0.2s ease'
-
-
-                    }}
-                >
+                <button onClick={iniciarSesion} className="btn btn-morado w-100">
                     Iniciar sesión
                 </button>
-                
             </div>
         </div>
     );
+
 };
 
 export default Login;
