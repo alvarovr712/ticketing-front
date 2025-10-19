@@ -1,122 +1,275 @@
+:root {
+    /* --- Modo Claro --- */
+    --bg-principal: #e8ecf4; 
+    --texto-principal: #1e293b; 
+    --texto-secundario: #1275ff; 
+    --texto-acento: #ecf1ff; 
+
+
+    --borde-suave: #cbd5e1; 
+    --borde-acento: #d5e0f2; 
+   
+
+    /* Fondos de Cajas y Contenedores */
+    --bg-contenedor: #ffffff; 
+    --bg-gradiente-start: #ffffff;
+    --bg-gradiente-end: #f1f5f9;
+    --bg-hover-sutil: rgba(59, 130, 246, 0.08); 
+    --bg-activo-sutil: #649de3; 
+    --bg-input: #f9fafb; 
+
+    /* Sombras */
+    --sombra-color: rgba(105, 105, 105, 0.08); 
+   
+}
+
+
+body.dark-mode {
+    /* --- Modo Oscuro -- */
+    --bg-principal: #0b1120;
+    --texto-principal: #f1f5f9;
+    --texto-secundario: #ffffff;
+    --texto-acento: #f1dfdfe8;
+  
+
+    --borde-suave: #1e293b; 
+    --borde-acento: #b2acac;
+    --borde-foco: #a5b4fc;
+
+    /* Fondos de Cajas y Contenedores */
+    --bg-contenedor: rgba(30, 41, 59, 0.9);
+    --bg-gradiente-start: #1e293b;
+    --bg-gradiente-end: #0f172a;
+    --bg-hover-sutil: rgba(99, 102, 241, 0.25);
+    --bg-activo-sutil: #1e3a8a;
+    --bg-input: #1e293b;
+
+    /* Sombras */
+    --sombra-color: rgba(0, 0, 0, 0.15); 
+    --sombra-color-acento: rgba(96, 165, 250, 0.15);
+}
+
+
 
 
 body {
-  background-color: #2e4d3a;
-  color: #ffffff; }
+    background-color: var(--bg-principal);
+    color: var(--texto-principal);
+    font-family: 'Inter', 'Poppins', sans-serif;
+    line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 
 .contenedor-mensajes {
-  background-color: #212529;
-  border: 2px solid #0fcc48;
-  padding: 2rem;
+    background: var(--bg-contenedor);
+    border: 1px solid var(--borde-acento);
+    padding: 2rem;
+    border-radius: 14px;
+    box-shadow: 0 0 25px var(--sombra-color-acento);
+    backdrop-filter: blur(8px);
 }
-  
-  
+
+
 .mensaje {
-  width: 100%;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  border: 1px solid #0fcc48;
-  border-radius: 6px;
-  
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--bg-gradiente-start), var(--bg-gradiente-end));
+    border: 1px solid var(--borde-suave);
+    transition: all 0.25s ease;
+}
+
+.mensaje:hover {
+    border-color: var(--borde-foco);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+    transform: translateY(-3px);
 }
 
 .mensaje .cabecera {
-  font-size: 15px;
-  color: #ffffff;
-  margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--texto-acento);
+    margin-bottom: 6px;
 }
 
 .mensaje .contenido {
-  font-size: 15px;
-  color: #ffffff;
+    font-size: 15px;
+    color: var(--texto-principal);
 }
 
+
 .mensaje.publico {
-  background-color: #545470
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
 }
 
 .mensaje.privado {
-  background-color: #044739;
+    background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+    color: #040404;
 }
 
-
-
-/* Estilos para botones editar y borrar */
-
+/* === ACCIONES === */
 .acciones-mensaje {
-  margin-top: 4px;
-  font-size: 0.8rem;
-  color: #666;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
 }
 
 .btn-accion {
-  background: none;
-  border: none;
-  color: #007bff;
-  padding: 0 6px;
-  cursor: pointer;
-  
+    background: none;
+    border: none;
+    color: var(--borde-acento);
+    padding: 0 6px;
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .btn-accion:hover {
-  text-decoration: underline;
+    color: var(--borde-foco);
+    text-decoration: underline;
 }
 
-/*Estilos para los detalles del ticket*/
+/* === DETALLES DEL TICKET === */
 .ticket-detalles {
-  background-color: #5c636a; 
-  color: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #0fcc48;
-  transition: all 0.3s ease-in-out;
+    background: linear-gradient(180deg, var(--bg-gradiente-start), var(--bg-gradiente-end));
+    color: var(--texto-principal);
+    border-radius: 14px;
+    padding: 1.5rem;
+    border: 1px solid var(--borde-acento);
+    box-shadow: 0 0 16px var(--sombra-color-acento);
+    transition: all 0.3s ease;
+}
+
+.ticket-detalles:hover {
+    transform: scale(1.01);
+    box-shadow: 0 0 25px var(--sombra-color-acento);
 }
 
 .ticket-detalles h5,
 .ticket-detalles p,
 .ticket-detalles label,
 .ticket-detalles span {
-  color: #ffffff;
+    color: var(--texto-principal);
 }
 
 .ticket-detalles select {
-  background-color: #6c757d;
-  color: #ffffff;
-  border: 1px solid #0fcc48;
+    background-color: var(--bg-input);
+    color: var(--texto-principal);
+    border: 1px solid var(--borde-acento);
+    border-radius: 6px;
+    padding: 6px;
+    transition: all 0.2s;
 }
 
-/*Con esto consigo que en pantallas pequeñas cuando la parte de la derecha pase abajo haya un espaciado entre el boton enviar y la parte de abajo*/
-@media (max-width: 768px) {
-  .ticket-detalles {
-    margin-top: 2rem !important;
-  }
+.ticket-detalles select:focus {
+    border-color: var(--borde-foco);
+    outline: none;
 }
 
-
-
-/*Contenedor de descripcion*/
+/* === DESCRIPCIÓN === */
 .ticket-descripcion {
-  background-color: #5c636a;
-  border: 1px solid #0fcc48;
-  border-radius: 6px;
-  padding: 1.5rem;
-  color: white;
+    background: linear-gradient(180deg, var(--bg-gradiente-start), var(--bg-gradiente-end));
+    border: 1px solid var(--borde-acento);
+    border-radius: 10px;
+    padding: 1.5rem;
+    color: var(--texto-principal);
 }
 
-/*Tabs*/
-
+/* === TABS === */
+.ticket-tabs .nav-link {
+    color: var(--texto-secundario);
+    border: none;
+    transition: all 0.2s;
+}
 
 .ticket-tabs .nav-link.active {
-  border-color: #0fcc48;
-  color: #212529;
-  border-radius: 4px;
+    border-color: var(--borde-acento);
+    background: var(--bg-activo-sutil);
+    color: var(--texto-acento);
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 0 10px var(--sombra-color-acento);
 }
 
-/*El textarea de edicion*/
+/* === TEXTAREA DE EDICIÓN === */
 .textarea-edicion {
-  width: 100%;
-  box-sizing: border-box;
-  resize: vertical;
-  padding: 8px;
-  font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    padding: 10px;
+    font-size: 14px;
+    background-color: var(--bg-input);
+    color: var(--texto-principal);
+    border: 1px solid var(--borde-acento);
+    border-radius: 6px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.textarea-edicion:focus {
+    border-color: var(--borde-foco);
+    background-color: var(--bg-principal);
+    outline: none;
+}
+
+/* === SECCIÓN DE ACTIVIDAD === */
+.ticket-actividad {
+    background: var(--bg-contenedor);
+    color: var(--texto-principal);
+    border-radius: 12px;
+    border: 1px solid var(--borde-acento);
+    padding: 1.5rem;
+    box-shadow: 0 0 20px var(--sombra-color-acento);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.ticket-actividad h5,
+.ticket-actividad h6 {
+    color: #7486ba; 
+
+    font-weight: 600;
+    text-decoration: underline;
+    margin-bottom: 1rem;
+}
+
+.ticket-actividad li,
+.ticket-actividad .evento {
+    background: var(--bg-gradiente-end);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+    transition: background 0.2s ease;
+}
+
+.ticket-actividad li:hover,
+.ticket-actividad .evento:hover {
+    background: var(--bg-hover-sutil);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .ticket-detalles {
+        margin-top: 2rem !important;
+    }
+}
+
+/* === 3. ESTILOS GLOBALES === */
+.btn {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: all 0.25s;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+    transform: translateY(-2px);
 }

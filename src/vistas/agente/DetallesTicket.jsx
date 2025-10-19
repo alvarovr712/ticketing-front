@@ -251,7 +251,7 @@ const DetallesTicket = () => {
 
                         </div>
                     ) : (
-                        <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 bg-white">
+                      <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 ticket-actividad">
                             <h5 className="text-center mb-4" style={{ fontWeight: "bold", textDecoration: "underline" }}>Actividad del ticket</h5>
                             <ul className="list-unstyled">
                                 <li className="mb-3">🟢 <strong>Ticket creado el {new Date(ticket.fechaCreacion).toLocaleDateString("es-ES")}</strong></li>

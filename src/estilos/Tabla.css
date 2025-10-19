@@ -1,5 +1,3 @@
-
-
 .contenedor-tabla {
   overflow-x: auto;
 }
@@ -13,24 +11,28 @@
 }
 
 .tabla th {
-  background-color: #2c2c2c;      
-  color: #fff;
+  /* Usamos variables para el header */
+  background-color: var(--bg-gradiente-end);
+  color: var(--texto-principal);
   padding: 12px;
   text-align: left;
   font-weight: bold;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid var(--borde-suave);
 }
 
 .tabla td {
-  background-color: #f2f2f2;       
+  /* Esta es la corrección principal */
+  background-color: var(--bg-contenedor);
+  color: var(--texto-principal);
   padding: 12px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--borde-suave);
   vertical-align: middle;
 }
 
 .tabla tr:hover td {
-  background-color: #e6e6e6;      
+  background-color: var(--bg-hover-sutil); 
 }
+
 
 .badge {
   padding: 4px 8px;
@@ -56,10 +58,10 @@
   .tabla tr {
     display: block;
     margin-bottom: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--borde-suave); 
     border-radius: 6px;
     padding: 0.75rem;
-    background: #f8f8f8;
+    background: var(--bg-contenedor); 
   }
 
   .tabla td {
@@ -69,16 +71,16 @@
     border: none;
     background: none;
     font-size: 0.95rem;
+    color: var(--texto-principal); 
   }
 
   .tabla td::before {
     content: attr(data-label);
     font-weight: bold;
-    color: #333;
+    color: var(--texto-secundario); 
   }
 
 }
-/*Estados de vista para Ticket*/
 
 .estado-ticket {
   padding: 4px 12px;
