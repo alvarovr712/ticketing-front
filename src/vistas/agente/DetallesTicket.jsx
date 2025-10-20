@@ -36,37 +36,35 @@ const DetallesTicket = () => {
 
     const cargarTicket = () => {
         const token = localStorage.getItem('token');
+
         obtenerUnTicket(token, id)
             .then(datos => {
-                setTickets(prev => ({
-                    ...prev,
+                // Actualiza el estado del ticket completo
+                setTickets({
                     id: datos.id,
-                    anotaciones: datos.anotaciones,
-                    historiales: datos.historiales,
                     asunto: datos.asunto,
                     descripcion: datos.descripcion,
-                    fechaCreacion: datos.fechaCreacion
-                }));
+                    fechaCreacion: datos.fechaCreacion,
+                    anotaciones: datos.anotaciones,
+                    historiales: datos.historiales
+                });
 
+                // Solo actualiza los selects si no ha sido modificado manualmente
                 if (!modificado) {
                     setUrgencia((datos.urgencia || "").toLowerCase());
                     setImpacto((datos.impacto || "").toLowerCase());
                     setPrioridad((datos.prioridad || "").toLowerCase());
 
-                    const grupoAsignado = listagrupos.find(g => g.nombre === datos.grupo);
-                    const grupoId = grupoAsignado?.id?.toString() || "";
-                    setGrupo(grupoId);
 
-                    // Se cargan los usuarios del grupo que se asigna en el select o el que ya esta asignado en el ticket
-                    if (grupoAsignado?.id) {
-                        obtenerUsuariosPorGrupo(token, grupoAsignado.id)
+                    if (datos.id_grupo) {
+                        setGrupo(datos.id_grupo.toString());
+
+                        obtenerUsuariosPorGrupo(token, datos.id_grupo)
                             .then(setUsuariosGrupo)
                             .catch(error => setError(error.message));
                     }
 
-                    if (datos.id_grupo) {
-                        setGrupo(datos.id_grupo.toString());
-                    }
+
                     if (datos.id_tecnico) {
                         setUsuarioSeleccionado(datos.id_tecnico.toString());
                     }
@@ -74,6 +72,7 @@ const DetallesTicket = () => {
             })
             .catch(error => setError(error.message));
     };
+
 
     useEffect(() => {
         cargarTicket();
@@ -117,30 +116,23 @@ const DetallesTicket = () => {
     const ModificarTicket = async () => {
         const token = localStorage.getItem('token');
 
-        // Buscar el grupo y el agente completo por ID
-        const grupoSeleccionado = listagrupos.find(g => g.id.toString() === grupo);
-        const agenteSeleccionado = usuariosGrupo.find(u => u.id.toString() === usuarioSeleccionado);
-
-
         const datosTicket = {
-            grupo: grupoSeleccionado || { id: parseInt(grupo) },
-            agente: agenteSeleccionado ? { id: agenteSeleccionado.id } : null,
+            grupo: { id: parseInt(grupo) },
+            agente: usuarioSeleccionado ? { id: parseInt(usuarioSeleccionado) } : null,
             urgencia: urgencia.toUpperCase(),
             impacto: impacto.toUpperCase(),
             prioridad: prioridad.toUpperCase()
         };
 
-
-
         try {
-            const resultado = await editarTicket(token, id, datosTicket);
+            await editarTicket(token, id, datosTicket);
             setModificado(false);
-
         } catch (error) {
             console.error("Error al modificar el ticket:", error);
             setError("Error al modificar el ticket");
         }
     };
+
 
 
 
@@ -185,6 +177,7 @@ const DetallesTicket = () => {
         const token = localStorage.getItem('token');
         try {
             await crearAnotacion(token, descripcion, visibilidadTicket, id_ticket);
+            setDescripcionMensaje("");
             cargarTicket();
         } catch (error) {
             console.error("Error real al crear mensaje visible:", error);
@@ -426,7 +419,11 @@ const DetallesTicket = () => {
                                     verUsuariosGrupo(e);
                                 }}
                             >
-                                <option value="">Asigna un técnico</option>
+                                {!grupo && (
+                                    <option value="" disabled>
+                                        Asigna un técnico
+                                    </option>
+                                )}
                                 {listagrupos.map((item) => (
                                     <option key={item.id} value={item.id.toString()}>
                                         {item.nombre}
@@ -444,12 +441,16 @@ const DetallesTicket = () => {
                                 value={usuarioSeleccionado}
                                 onChange={(e) => setUsuarioSeleccionado(e.target.value)}
                             >
-                                <option value="">Selecciona un responsable</option>
-                                {usuariosGrupo.map((usuario, index) => (
-                                    <option key={index} value={usuario.id.toString()}>
-                                        {usuario.nombre}
+                                {!usuarioSeleccionado && (
+                                    <option value="" disabled>
+                                        Selecciona un responsable
                                     </option>
-                                ))}
+                                     )}
+                                {usuariosGrupo.map((usuario, index) => (
+                                        <option key={index} value={usuario.id.toString()}>
+                                            {usuario.nombre}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
 
