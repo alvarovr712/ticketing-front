@@ -17,7 +17,9 @@ const DetallesTicket = () => {
     const [impacto, setImpacto] = useState("");
     const [prioridad, setPrioridad] = useState("");
     const [grupo, setGrupo] = useState("");
+    const [estadoTicket, setEstadoTicket] = useState("");
     const [listagrupos, setListagrupos] = useState([])
+
 
     //UseState usados para editar mensajes
     const [id_anotacion, setId_anotacion] = useState(null);
@@ -49,7 +51,9 @@ const DetallesTicket = () => {
                     historiales: datos.historiales
                 });
 
-                // Solo actualiza los selects si no ha sido modificado manualmente
+                setEstadoTicket(datos.estadoTicket);
+
+                // Los select solo se actualizaran cuando se cambie un estado sino, no se precargaran.
                 if (!modificado) {
                     setUrgencia((datos.urgencia || "").toLowerCase());
                     setImpacto((datos.impacto || "").toLowerCase());
@@ -121,7 +125,8 @@ const DetallesTicket = () => {
             agente: usuarioSeleccionado ? { id: parseInt(usuarioSeleccionado) } : null,
             urgencia: urgencia.toUpperCase(),
             impacto: impacto.toUpperCase(),
-            prioridad: prioridad.toUpperCase()
+            prioridad: prioridad.toUpperCase(),
+            estadoTicket: estadoTicket
         };
 
         try {
@@ -445,14 +450,43 @@ const DetallesTicket = () => {
                                     <option value="" disabled>
                                         Selecciona un responsable
                                     </option>
-                                     )}
+                                )}
                                 {usuariosGrupo.map((usuario, index) => (
-                                        <option key={index} value={usuario.id.toString()}>
-                                            {usuario.nombre}
-                                        </option>
-                                    ))}
+                                    <option key={index} value={usuario.id.toString()}>
+                                        {usuario.nombre}
+                                    </option>
+                                ))}
                             </select>
                         </div>
+
+                        <div className="mb-3">
+                            <label htmlFor="estadoTicket" className="form-label"><strong>Estado del Ticket</strong></label>
+                            <select
+                                id="estadoTicket"
+                                className="form-select"
+                                value={estadoTicket}
+                                onChange={(e) => {
+                                    setModificado(true);
+                                    setEstadoTicket(e.target.value);
+                                }}
+                            >
+                                {/* Ver el estado del ticket*/}
+                                <option value={estadoTicket} disabled>
+                                    {estadoTicket}
+                                </option>
+
+                                {/* Si el estado del ticket es resuelto que se pueda selecionar pendiente para reabrirlo */}
+                                {estadoTicket === "RESUELTO" && (
+                                    <option value="PENDIENTE">PENDIENTE</option>
+                                )}
+
+                                {/* Si el ticket esta pendiente que se pueda cambiar el estado a resuelto cuando se solvente la incidencia */}
+                                {estadoTicket !== "RESUELTO" && (
+                                    <option value="RESUELTO">RESUELTO</option>
+                                )}
+                            </select>
+                        </div>
+
 
 
                         {/*Boton para guardar los cambios*/}
