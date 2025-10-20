@@ -3,6 +3,7 @@ import { editarTicket, obtenerTodosGrupos, obtenerUnTicket } from "../../api/Tic
 import { useParams } from "react-router-dom";
 import "../../estilos/DetallesTicket.css"
 import { borrarAnotacion, crearAnotacion, editarAnotacion } from "../../api/Anotacion";
+import { obtenerUsuariosPorGrupo } from "../../api/Usuarios";
 
 const DetallesTicket = () => {
 
@@ -18,18 +19,18 @@ const DetallesTicket = () => {
     const [grupo, setGrupo] = useState("");
     const [listagrupos, setListagrupos] = useState([])
 
-    //UseState usado para hacer tab el box para escribir mensajes y poder cambiar entre publico y privado
-
-    const [tipoMensaje, setTipoMensaje] = useState("publico");
     //UseState usados para editar mensajes
     const [id_anotacion, setId_anotacion] = useState(null);
     const [descripcion, setDescripcion] = useState("");
     //UseState usados para crear mensajes
     const [visibilidadTicket, setVisibilidadTicket] = useState(1);
     const [descripcionMensaje, setDescripcionMensaje] = useState("");
+    //UseState usado para ve todos los usuarios de un grupo en el select
+    const [usuariosGrupo, setUsuariosGrupo] = useState([]);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState("");
 
-
-
+    //Estado para indicar si algun estado del ticket ha sido modificado o no y asi  actulizarlo o no en el useEffect()
+    const [modificado, setModificado] = useState(false);
 
 
 
@@ -37,21 +38,51 @@ const DetallesTicket = () => {
         const token = localStorage.getItem('token');
         obtenerUnTicket(token, id)
             .then(datos => {
-                datos.anotaciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-                setTickets(datos);
-                setUrgencia((datos.urgencia || "").toLowerCase());
-                setImpacto((datos.impacto || "").toLowerCase());
-                setPrioridad((datos.prioridad || "").toLowerCase());
-                setGrupo(datos.grupo || "");
+                setTickets(prev => ({
+                    ...prev,
+                    id: datos.id,
+                    anotaciones: datos.anotaciones,
+                    historiales: datos.historiales,
+                    asunto: datos.asunto,
+                    descripcion: datos.descripcion,
+                    fechaCreacion: datos.fechaCreacion
+                }));
+
+                if (!modificado) {
+                    setUrgencia((datos.urgencia || "").toLowerCase());
+                    setImpacto((datos.impacto || "").toLowerCase());
+                    setPrioridad((datos.prioridad || "").toLowerCase());
+
+                    const grupoAsignado = listagrupos.find(g => g.nombre === datos.grupo);
+                    const grupoId = grupoAsignado?.id?.toString() || "";
+                    setGrupo(grupoId);
+
+                    // Se cargan los usuarios del grupo que se asigna en el select o el que ya esta asignado en el ticket
+                    if (grupoAsignado?.id) {
+                        obtenerUsuariosPorGrupo(token, grupoAsignado.id)
+                            .then(setUsuariosGrupo)
+                            .catch(error => setError(error.message));
+                    }
+
+                    if (datos.id_grupo) {
+                        setGrupo(datos.id_grupo.toString());
+                    }
+                    if (datos.id_tecnico) {
+                        setUsuarioSeleccionado(datos.id_tecnico.toString());
+                    }
+                }
             })
             .catch(error => setError(error.message));
     };
 
     useEffect(() => {
         cargarTicket();
+        if (modificado) return;
         const intervalo = setInterval(cargarTicket, 2000);
         return () => clearInterval(intervalo);
-    }, [id]);
+    }, [id, modificado, listagrupos]);
+
+
 
 
 
@@ -64,6 +95,20 @@ const DetallesTicket = () => {
             .catch(error => setError(error.message));
     }, [])
 
+    //VER USUARIOS DE UN GRUPO
+    const verUsuariosGrupo = async (e) => {
+        const token = localStorage.getItem('token');
+        const idGrupoSeleccionado = e.target.value;
+        setGrupo(idGrupoSeleccionado); // actualiza el grupo seleccionado
+
+        try {
+            const usuarios = await obtenerUsuariosPorGrupo(token, idGrupoSeleccionado);
+            setUsuariosGrupo(usuarios);
+            setUsuarioSeleccionado(""); // limpia el técnico seleccionado
+        } catch (error) {
+            setError("Error al cargar los usuarios del grupo");
+        }
+    };
 
 
 
@@ -72,22 +117,31 @@ const DetallesTicket = () => {
     const ModificarTicket = async () => {
         const token = localStorage.getItem('token');
 
+        // Buscar el grupo y el agente completo por ID
+        const grupoSeleccionado = listagrupos.find(g => g.id.toString() === grupo);
+        const agenteSeleccionado = usuariosGrupo.find(u => u.id.toString() === usuarioSeleccionado);
+
+
         const datosTicket = {
-            grupo: { nombre: grupo },
+            grupo: grupoSeleccionado || { id: parseInt(grupo) },
+            agente: agenteSeleccionado ? { id: agenteSeleccionado.id } : null,
             urgencia: urgencia.toUpperCase(),
             impacto: impacto.toUpperCase(),
             prioridad: prioridad.toUpperCase()
         };
 
+
+
         try {
             const resultado = await editarTicket(token, id, datosTicket);
-            console.log("Ticket modificado:", resultado);
+            setModificado(false);
 
         } catch (error) {
             console.error("Error al modificar el ticket:", error);
             setError("Error al modificar el ticket");
         }
-    }
+    };
+
 
 
     //ELIMINAR MENSAJE
@@ -126,7 +180,7 @@ const DetallesTicket = () => {
         }
     };
 
-    //CREAR MENSAJE VISIBLE
+    //CREAR ANOTACION (MENSAJE)
     const crearMensaje = async (descripcion, visibilidadTicket, id_ticket) => {
         const token = localStorage.getItem('token');
         try {
@@ -251,7 +305,7 @@ const DetallesTicket = () => {
 
                         </div>
                     ) : (
-                      <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 ticket-actividad">
+                        <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 ticket-actividad">
                             <h5 className="text-center mb-4" style={{ fontWeight: "bold", textDecoration: "underline" }}>Actividad del ticket</h5>
                             <ul className="list-unstyled">
                                 <li className="mb-3">🟢 <strong>Ticket creado el {new Date(ticket.fechaCreacion).toLocaleDateString("es-ES")}</strong></li>
@@ -289,7 +343,8 @@ const DetallesTicket = () => {
                                 </span>
                             </li>
                             <li className="nav-item">
-                                <span className={`nav-link ${visibilidadTicket === 0 ? "active" : ""} ${!ticket.grupo ? "disabled text-muted" : ""}`}
+                                <span className={`nav-link ${visibilidadTicket === 0 ? "active" : ""} ${!grupo ? "disabled text-muted" : ""}`}
+
                                     style={{ cursor: "pointer" }}
                                     onClick={() => setVisibilidadTicket(0)}>
                                     Privado
@@ -327,7 +382,10 @@ const DetallesTicket = () => {
                         {/* Urgencia */}
                         <div className="mb-3">
                             <label htmlFor="urgencia" className="form-label"><strong>Urgencia</strong></label>
-                            <select id="urgencia" className="form-select" value={urgencia} onChange={(e) => setUrgencia(e.target.value)}>
+                            <select id="urgencia" className="form-select" value={urgencia} onChange={(e) => {
+                                setModificado(true);
+                                setUrgencia(e.target.value);
+                            }}>
                                 <option value="">Selecciona urgencia</option>
                                 <option value="baja">BAJA</option>
                                 <option value="media">MEDIA</option>
@@ -338,7 +396,7 @@ const DetallesTicket = () => {
                         {/* Impacto */}
                         <div className="mb-3">
                             <label htmlFor="impacto" className="form-label"><strong>Impacto</strong></label>
-                            <select id="impacto" className="form-select" value={impacto} onChange={(e) => setImpacto(e.target.value)}>
+                            <select id="impacto" className="form-select" value={impacto} onChange={(e) => { setModificado(true); setImpacto(e.target.value) }}>
                                 <option value="">Selecciona impacto</option>
                                 <option value="bajo">BAJO</option>
                                 <option value="medio">MEDIO</option>
@@ -349,26 +407,52 @@ const DetallesTicket = () => {
                         {/* Prioridad */}
                         <div className="mb-3">
                             <label htmlFor="prioridad" className="form-label"><strong>Prioridad</strong></label>
-                            <select id="prioridad" className="form-select" value={prioridad} onChange={(e) => setPrioridad(e.target.value)}>
+                            <select id="prioridad" className="form-select" value={prioridad} onChange={(e) => { setModificado(true); setPrioridad(e.target.value) }}>
                                 <option value="">Selecciona prioridad</option>
                                 <option value="baja">BAJA</option>
                                 <option value="media">MEDIA</option>
                                 <option value="alta">ALTA</option>
                             </select>
                         </div>
-                        {/*Mostrar grupo*/}
+                        {/* Mostrar grupo */}
                         <div className="mb-3">
-                            <label htmlFor="grupo" className="form-label"><strong>Asignar Tecnico</strong></label>
-                            <select id="grupo" className="form-select" value={grupo} onChange={(e) => setGrupo(e.target.value)}
+                            <label htmlFor="grupo" className="form-label"><strong>Asignar Grupo Técnico</strong></label>
+                            <select
+                                id="grupo"
+                                className="form-select"
+                                value={grupo}
+                                onChange={(e) => {
+                                    setModificado(true);
+                                    verUsuariosGrupo(e);
+                                }}
                             >
-
-                                <option value="">Asigna un tecnico</option>
-                                {listagrupos.map((nombre, index) => (
-                                    <option key={index} value={nombre}>{nombre}</option>
+                                <option value="">Asigna un técnico</option>
+                                {listagrupos.map((item) => (
+                                    <option key={item.id} value={item.id.toString()}>
+                                        {item.nombre}
+                                    </option>
                                 ))}
-
                             </select>
                         </div>
+
+                        {/* Mostrar usuarios del grupo */}
+                        <div className="mb-3">
+                            <label htmlFor="usuario" className="form-label"><strong>Responsable</strong></label>
+                            <select
+                                id="usuario"
+                                className="form-select"
+                                value={usuarioSeleccionado}
+                                onChange={(e) => setUsuarioSeleccionado(e.target.value)}
+                            >
+                                <option value="">Selecciona un responsable</option>
+                                {usuariosGrupo.map((usuario, index) => (
+                                    <option key={index} value={usuario.id.toString()}>
+                                        {usuario.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
 
                         {/*Boton para guardar los cambios*/}
                         <div className="d-grid mt-5">
@@ -387,5 +471,6 @@ const DetallesTicket = () => {
 
     );
 }
+
 
 export default DetallesTicket;
