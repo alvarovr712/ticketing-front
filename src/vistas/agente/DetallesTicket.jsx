@@ -40,6 +40,8 @@ const DetallesTicket = () => {
 
     //Estado para indicar si algun estado del ticket ha sido modificado o no y asi  actulizarlo o no en el useEffect()
     const [modificado, setModificado] = useState(false);
+    //UseState usado para tener el estado del ticket una vez cambiado asi no lo mezclo con el del select y me quita los cambios antes de guardar en la base de datos
+    const [estadoConfirmado, setEstadoConfirmado] = useState("");
 
 
 
@@ -59,6 +61,7 @@ const DetallesTicket = () => {
                 });
 
                 setEstadoTicket(datos.estadoTicket);
+                setEstadoConfirmado(datos.estadoTicket);
 
                 // Los select solo se actualizaran cuando se cambie un estado sino, no se precargaran.
                 if (!modificado) {
@@ -203,8 +206,10 @@ const DetallesTicket = () => {
 
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
+    console.log("Estado actual del ticket:", estadoTicket);
 
     return (
+        
 
         <div className="container mt-4">
             <div className="row d-flex">
@@ -222,7 +227,7 @@ const DetallesTicket = () => {
                         vistaActiva={vistaActiva}
                         setVistaActiva={setVistaActiva}
                     />
-                    
+
                     {/*Mensaje y actividad (tabs)*/}
                     {vistaActiva === "mensajes" ? (
                         <ListaMensajes
@@ -242,22 +247,25 @@ const DetallesTicket = () => {
                             historiales={ticket.historiales}
                         />
                     )}
-
-                    <div className="d-flex flex-column ">
-                        {/* Tabs para mensajes publicos o privados y escribir anotacion(mensaje) */}
-                        <EscribirMensaje
-                            descripcionMensaje={descripcionMensaje}
-                            setDescripcionMensaje={setDescripcionMensaje}
-                            visibilidadTicket={visibilidadTicket}
-                            setVisibilidadTicket={setVisibilidadTicket}
-                            grupo={grupo}
-                            ticketId={ticket.id}
-                            crearMensaje={crearMensaje}
-                        />
-                    </div>
+                    {estadoConfirmado !== "RESUELTO" && estadoConfirmado !== "CERRADO" && (
+                        <div className="d-flex flex-column ">
+                            {/* Tabs para mensajes publicos o privados y escribir anotacion(mensaje) */}
+                            <EscribirMensaje
+                                descripcionMensaje={descripcionMensaje}
+                                setDescripcionMensaje={setDescripcionMensaje}
+                                visibilidadTicket={visibilidadTicket}
+                                setVisibilidadTicket={setVisibilidadTicket}
+                                grupo={grupo}
+                                ticketId={ticket.id}
+                                crearMensaje={crearMensaje}
+                            />
+                        </div>
+                    )}
                 </div>
 
+
                 {/*Columna derecha */}
+                {estadoConfirmado !== "CERRADO" && (
                 <EstadosTicket
                     urgencia={urgencia}
                     impacto={impacto}
@@ -279,6 +287,7 @@ const DetallesTicket = () => {
                     mensaje={mensaje}
 
                 />
+                )}
 
             </div>
         </div>

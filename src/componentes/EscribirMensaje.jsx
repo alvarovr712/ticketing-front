@@ -1,3 +1,4 @@
+import EstadosTicket from "./EstadosTicket"
 
 
 const EscribirMensaje = ({
@@ -13,6 +14,7 @@ const EscribirMensaje = ({
 }) => {
 
     return (
+        
         <div className="d-flex flex-column">
             {mostrarTabs && (
                 <ul className="nav nav-tabs mb-2">
@@ -50,6 +52,7 @@ const EscribirMensaje = ({
                 <button
                     className="btn btn-success"
                     style={{ maxWidth: "200px", width: "100%" }}
+                    disabled={!descripcionMensaje.trim()}
                     onClick={() => crearMensaje(descripcionMensaje, visibilidadTicket, ticketId)}
                 >
                     Enviar
