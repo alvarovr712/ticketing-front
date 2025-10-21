@@ -4,12 +4,19 @@ import { useParams } from "react-router-dom";
 import "../../estilos/DetallesTicket.css"
 import { borrarAnotacion, crearAnotacion, editarAnotacion } from "../../api/Anotacion";
 import { obtenerUsuariosPorGrupo } from "../../api/Usuarios";
+import TicketDescripcion from "../../componentes/TicketDescripcion";
+import TabsMensajesActividad from "../../componentes/TabsMensajesActividad";
+import ListaMensajes from "../../componentes/ListaMensajes";
+import ActividadTicket from "../../componentes/ActividadTicket";
+import EscribirMensaje from "../../componentes/EscribirMensaje";
+import EstadosTicket from "../../componentes/EstadosTicket";
 
 const DetallesTicket = () => {
 
     const { id } = useParams();
     const [ticket, setTickets] = useState(null);
     const [error, setError] = useState("");
+    const [mensaje, setMensaje] = useState("");
 
     const [vistaActiva, setVistaActiva] = useState("mensajes")
 
@@ -102,12 +109,12 @@ const DetallesTicket = () => {
     const verUsuariosGrupo = async (e) => {
         const token = localStorage.getItem('token');
         const idGrupoSeleccionado = e.target.value;
-        setGrupo(idGrupoSeleccionado); // actualiza el grupo seleccionado
 
         try {
             const usuarios = await obtenerUsuariosPorGrupo(token, idGrupoSeleccionado);
             setUsuariosGrupo(usuarios);
-            setUsuarioSeleccionado(""); // limpia el técnico seleccionado
+            setUsuarioSeleccionado("");
+            setModificado(true)
         } catch (error) {
             setError("Error al cargar los usuarios del grupo");
         }
@@ -120,8 +127,10 @@ const DetallesTicket = () => {
     const ModificarTicket = async () => {
         const token = localStorage.getItem('token');
 
+        const grupoSeleccionado = listagrupos.find(g => g.id.toString() === grupo);
+
         const datosTicket = {
-            grupo: { id: parseInt(grupo) },
+            grupo: grupoSeleccionado ? { nombre: grupoSeleccionado.nombre } : null,
             agente: usuarioSeleccionado ? { id: parseInt(usuarioSeleccionado) } : null,
             urgencia: urgencia.toUpperCase(),
             impacto: impacto.toUpperCase(),
@@ -132,8 +141,10 @@ const DetallesTicket = () => {
         try {
             await editarTicket(token, id, datosTicket);
             setModificado(false);
+            setMensaje("🎫 Ticket actualizado con éxito");
+            setTimeout(() => setMensaje(""), 3000);
         } catch (error) {
-            console.error("Error al modificar el ticket:", error);
+            console.error("Error al modificar el ticket:", error.response?.data || error.message);
             setError("Error al modificar el ticket");
         }
     };
@@ -193,10 +204,6 @@ const DetallesTicket = () => {
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
 
-
-
-
-
     return (
 
         <div className="container mt-4">
@@ -204,308 +211,78 @@ const DetallesTicket = () => {
                 <div className="col-md-8 d-flex flex-column" style={{ height: "90vh" }}>
 
                     {/*Descripcion del ticket*/}
-                    <div className="ticket-descripcion mb-2">
-                        {/* Asunto y Fecha de creación */}
-                        <div className="row mb-2">
-                            <div className="col-12 col-md-6">
-                                <h5>
-                                    <strong>Asunto:</strong> <span className="fw-normal ms-2">{ticket.asunto}</span>
-                                </h5>
-                            </div>
-                            <div className="col-12 col-md-6">
-                                <h5>
-                                    <strong>Fecha de creación:</strong> <span className="fw-normal ms-2">{new Date(ticket.fechaCreacion).toLocaleString("es-ES", {
-                                        day: "2-digit",
-                                        month: "long",
-                                        year: "numeric",
-                                        hour: "2-digit",
-                                        minute: "2-digit"
-                                    })}h</span>
-                                </h5>
-                            </div>
-                        </div>
-
-                        {/* Descripción */}
-                        <h5><strong>Descripción:</strong></h5>
-                        <p>{ticket.descripcion}</p>
-                    </div>
-
+                    <TicketDescripcion
+                        asunto={ticket.asunto}
+                        fechaCreacion={ticket.fechaCreacion}
+                        descripcion={ticket.descripcion}
+                    />
 
                     {/*tabs para cambiar entre mensaje y actividad*/}
-                    <ul className="nav nav-tabs ticket-tabs ">
-                        <li className="nav-item">
-                            <span
-                                className={`nav-link ${vistaActiva === "mensajes" ? "active" : ""}`}
-                                style={{ cursor: "pointer" }}
-                                onClick={() => setVistaActiva("mensajes")}
-                            >
-                                Mensajes
-                            </span>
-                        </li>
-                        <li className="nav-item">
-                            <span
-                                className={`nav-link ${vistaActiva === "actividad" ? "active" : ""}`}
-                                style={{ cursor: "pointer" }}
-                                onClick={() => setVistaActiva("actividad")}
-                            >
-                                Actividad
-                            </span>
-                        </li>
-                    </ul>
+                    <TabsMensajesActividad
+                        vistaActiva={vistaActiva}
+                        setVistaActiva={setVistaActiva}
+                    />
+                    
                     {/*Mensaje y actividad (tabs)*/}
                     {vistaActiva === "mensajes" ? (
-                        <div className="flex-grow-1 overflow-auto contenedor-mensajes">
+                        <ListaMensajes
+                            anotaciones={ticket.anotaciones}
+                            id_anotacion={id_anotacion}
+                            descripcion={descripcion}
+                            setDescripcion={setDescripcion}
+                            activarEdicion={activarEdicion}
+                            cancelarEdicion={cancelarEdicion}
+                            guardarEdicion={guardarEdicion}
+                            EliminarMensaje={EliminarMensaje}
 
-                            {[...ticket.anotaciones]
-                                .sort((a, b) => a.id - b.id)
-                                .map((anotacion, index) => {
-                                    const perfil = anotacion.usuario.perfil.nombre
-                                    const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
-                                    const clase = anotacion.visibilidadTicket === 0 ? "privado" : "publico";
-                                    const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
-                                        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-                                    });
-
-                                    return (
-                                        <div key={index} className={`mensaje ${clase}`}>
-                                            <div className="cabecera">
-                                                <strong>{nombre}</strong> - {perfil} , {fecha}
-                                            </div>
-                                            <div className="contenido">
-
-                                                {id_anotacion === anotacion.id ? (
-                                                    <div className="edicion-mensaje">
-                                                        <textarea
-                                                            value={descripcion}
-                                                            onChange={(e) => setDescripcion(e.target.value)}
-                                                            rows={3}
-                                                            className="textarea-edicion"
-                                                        />
-                                                        <div className="acciones-edicion">
-                                                            <button className="btn-accion" onClick={() => guardarEdicion(anotacion)}>Guardar</button>
-                                                            <button className="btn-accion" onClick={cancelarEdicion}>Cancelar</button>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <p>{anotacion.descripcion}</p>
-                                                )}
-
-                                            </div>
-                                            {/* Botones para editar y borrar cada mensaje */}
-                                            <div className="acciones-mensaje">
-                                                <button className="btn-accion" onClick={() => activarEdicion(anotacion)}>Editar</button>
-                                                <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-
-
-                        </div>
+                        />
                     ) : (
-                        <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 ticket-actividad">
-                            <h5 className="text-center mb-4" style={{ fontWeight: "bold", textDecoration: "underline" }}>Actividad del ticket</h5>
-                            <ul className="list-unstyled">
-                                <li className="mb-3">🟢 <strong>Ticket creado el {new Date(ticket.fechaCreacion).toLocaleDateString("es-ES")}</strong></li>
-
-                                {ticket.historiales
-                                    .map((historial, index) => {
-                                        const nombre = `${historial.usuario.nombre} ${historial.usuario.apellidos}`;
-                                        const perfil = historial.usuario.perfil.nombre;
-                                        const fecha = new Date(historial.fecha).toLocaleString("es-ES", {
-                                            day: "2-digit",
-                                            month: "short",
-                                            year: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit"
-                                        });
-
-                                        return (
-                                            <li key={index} className="mb-3">
-                                                🎫 <strong>{nombre} ({perfil}) · {historial.detalles} · {fecha}</strong>
-                                            </li>
-                                        );
-                                    })}
-                            </ul>
-                        </div>
+                        <ActividadTicket
+                            fechaCreacion={ticket.fechaCreacion}
+                            historiales={ticket.historiales}
+                        />
                     )}
 
                     <div className="d-flex flex-column ">
-                        {/* Tabs para mensajes publicos o privados */}
-                        <ul className="nav nav-tabs mb-2">
-                            <li className="nav-item">
-                                <span className="nav-link active"
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => setVisibilidadTicket(1)}>
-                                    Público
-                                </span>
-                            </li>
-                            <li className="nav-item">
-                                <span className={`nav-link ${visibilidadTicket === 0 ? "active" : ""} ${!grupo ? "disabled text-muted" : ""}`}
-
-                                    style={{ cursor: "pointer" }}
-                                    onClick={() => setVisibilidadTicket(0)}>
-                                    Privado
-                                </span>
-                            </li>
-                        </ul>
-
-                        {/* Textarea */}
-                        <textarea
-                            className="form-control mb-2"
-                            rows="3"
-                            placeholder="Escribe un mensaje..."
-                            style={{ resize: "none" }}
-                            value={descripcionMensaje}
-                            onChange={(e) => setDescripcionMensaje(e.target.value)}
-                        ></textarea>
-
-                        <div className="text-center">
-                            <button
-                                className="btn btn-success"
-                                style={{ maxWidth: "200px", width: "100%" }}
-                                onClick={() => crearMensaje(descripcionMensaje, visibilidadTicket, ticket.id,)}
-                            >
-                                Enviar
-                            </button>
-                        </div>
+                        {/* Tabs para mensajes publicos o privados y escribir anotacion(mensaje) */}
+                        <EscribirMensaje
+                            descripcionMensaje={descripcionMensaje}
+                            setDescripcionMensaje={setDescripcionMensaje}
+                            visibilidadTicket={visibilidadTicket}
+                            setVisibilidadTicket={setVisibilidadTicket}
+                            grupo={grupo}
+                            ticketId={ticket.id}
+                            crearMensaje={crearMensaje}
+                        />
                     </div>
                 </div>
 
                 {/*Columna derecha */}
-                <div className="col-md-4 ticket-detalles">
-                    <h2 style={{ textAlign: "center" }}>Detalles del ticket</h2>
-                    <br />
-                    <div className="mt-4">
-                        {/* Urgencia */}
-                        <div className="mb-3">
-                            <label htmlFor="urgencia" className="form-label"><strong>Urgencia</strong></label>
-                            <select id="urgencia" className="form-select" value={urgencia} onChange={(e) => {
-                                setModificado(true);
-                                setUrgencia(e.target.value);
-                            }}>
-                                <option value="">Selecciona urgencia</option>
-                                <option value="baja">BAJA</option>
-                                <option value="media">MEDIA</option>
-                                <option value="alta">ALTA</option>
-                            </select>
-                        </div>
+                <EstadosTicket
+                    urgencia={urgencia}
+                    impacto={impacto}
+                    prioridad={prioridad}
+                    grupo={grupo}
+                    usuarioSeleccionado={usuarioSeleccionado}
+                    estadoTicket={estadoTicket}
+                    listagrupos={listagrupos}
+                    usuariosGrupo={usuariosGrupo}
+                    setUrgencia={setUrgencia}
+                    setImpacto={setImpacto}
+                    setPrioridad={setPrioridad}
+                    setGrupo={setGrupo}
+                    setUsuarioSeleccionado={setUsuarioSeleccionado}
+                    setEstadoTicket={setEstadoTicket}
+                    verUsuariosGrupo={verUsuariosGrupo}
+                    ModificarTicket={ModificarTicket}
+                    setModificado={setModificado}
+                    mensaje={mensaje}
 
-                        {/* Impacto */}
-                        <div className="mb-3">
-                            <label htmlFor="impacto" className="form-label"><strong>Impacto</strong></label>
-                            <select id="impacto" className="form-select" value={impacto} onChange={(e) => { setModificado(true); setImpacto(e.target.value) }}>
-                                <option value="">Selecciona impacto</option>
-                                <option value="bajo">BAJO</option>
-                                <option value="medio">MEDIO</option>
-                                <option value="alto">ALTO</option>
-                            </select>
-                        </div>
+                />
 
-                        {/* Prioridad */}
-                        <div className="mb-3">
-                            <label htmlFor="prioridad" className="form-label"><strong>Prioridad</strong></label>
-                            <select id="prioridad" className="form-select" value={prioridad} onChange={(e) => { setModificado(true); setPrioridad(e.target.value) }}>
-                                <option value="">Selecciona prioridad</option>
-                                <option value="baja">BAJA</option>
-                                <option value="media">MEDIA</option>
-                                <option value="alta">ALTA</option>
-                            </select>
-                        </div>
-                        {/* Mostrar grupo */}
-                        <div className="mb-3">
-                            <label htmlFor="grupo" className="form-label"><strong>Asignar Grupo Técnico</strong></label>
-                            <select
-                                id="grupo"
-                                className="form-select"
-                                value={grupo}
-                                onChange={(e) => {
-                                    setModificado(true);
-                                    verUsuariosGrupo(e);
-                                }}
-                            >
-                                {!grupo && (
-                                    <option value="" disabled>
-                                        Asigna un técnico
-                                    </option>
-                                )}
-                                {listagrupos.map((item) => (
-                                    <option key={item.id} value={item.id.toString()}>
-                                        {item.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Mostrar usuarios del grupo */}
-                        <div className="mb-3">
-                            <label htmlFor="usuario" className="form-label"><strong>Responsable</strong></label>
-                            <select
-                                id="usuario"
-                                className="form-select"
-                                value={usuarioSeleccionado}
-                                onChange={(e) => setUsuarioSeleccionado(e.target.value)}
-                            >
-                                {!usuarioSeleccionado && (
-                                    <option value="" disabled>
-                                        Selecciona un responsable
-                                    </option>
-                                )}
-                                {usuariosGrupo.map((usuario, index) => (
-                                    <option key={index} value={usuario.id.toString()}>
-                                        {usuario.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="mb-3">
-                            <label htmlFor="estadoTicket" className="form-label"><strong>Estado del Ticket</strong></label>
-                            <select
-                                id="estadoTicket"
-                                className="form-select"
-                                value={estadoTicket}
-                                onChange={(e) => {
-                                    setModificado(true);
-                                    setEstadoTicket(e.target.value);
-                                }}
-                            >
-                                {/* Ver el estado del ticket*/}
-                                <option value={estadoTicket} disabled>
-                                    {estadoTicket}
-                                </option>
-
-                                {/* Si el estado del ticket es resuelto que se pueda selecionar pendiente para reabrirlo */}
-                                {estadoTicket === "RESUELTO" && (
-                                    <option value="PENDIENTE">PENDIENTE</option>
-                                )}
-
-                                {/* Si el ticket esta pendiente que se pueda cambiar el estado a resuelto cuando se solvente la incidencia */}
-                                {estadoTicket !== "RESUELTO" && (
-                                    <option value="RESUELTO">RESUELTO</option>
-                                )}
-                            </select>
-                        </div>
-
-
-
-                        {/*Boton para guardar los cambios*/}
-                        <div className="d-grid mt-5">
-                            <button className="btn btn-success" onClick={ModificarTicket}>
-                                Guardar cambios
-                            </button>
-                        </div>
-
-                    </div>
-
-
-                </div>
             </div>
-
         </div>
-
     );
 }
-
 
 export default DetallesTicket;
