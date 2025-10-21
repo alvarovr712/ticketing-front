@@ -206,7 +206,7 @@ const DetallesTicket = () => {
 
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
-    console.log("Estado actual del ticket:", estadoTicket);
+    
 
     return (
         
