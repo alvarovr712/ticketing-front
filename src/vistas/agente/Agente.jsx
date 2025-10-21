@@ -10,7 +10,7 @@ const Agente = () => {
 
     const contenidoMenu = [
         {nombre:'Tickets', ruta:'/agente/tickets', icono:'🎫'},
-        {nombre:'Historial Tickets', ruta:'agente/historial', icono:'🕝'}
+        {nombre:'Historial Tickets', ruta:'/agente/historial', icono:'🕝'}
     ]
 
     const logout = () => {

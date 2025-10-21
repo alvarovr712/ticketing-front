@@ -15,6 +15,7 @@ import DetallesTicket from "./vistas/agente/DetallesTicket";
 import Usuarios from "./vistas/administrador/Usuarios";
 import TicketsUsuario from "./vistas/administrador/TicketUsuario"; 
 import ThemeToggleButton from './componentes/ThemeToggleButton';
+import AgenteHistorialTickets from "./vistas/agente/AgenteHistorialTickets";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="tickets" element={<AgenteTickets />} />
           <Route index element={<AgenteTickets />} />
           <Route path="tickets/:id" element={<DetallesTicket />} />
+          <Route path="historial" element={<AgenteHistorialTickets/>}/>
         </Route>
 
         {/* SOLICITANTE */}
