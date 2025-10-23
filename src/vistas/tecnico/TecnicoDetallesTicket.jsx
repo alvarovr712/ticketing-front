@@ -83,8 +83,9 @@ const TecnicoDetallesTicket = () => {
                 </div>
 
                 {/*Columna derecha*/}
-                <div className="col-md-4 ticket-detalles">
-                    {estadoConfirmado !== "CERRADO" && (
+                {estadoConfirmado !== "CERRADO" && (
+                    <div className="col-md-4 ticket-detalles">
+
                         <EstadosTicketLectura
                             urgencia={ticket.urgencia}
                             impacto={ticket.impacto}
@@ -93,9 +94,8 @@ const TecnicoDetallesTicket = () => {
                             grupo={ticket.grupo}
                             responsable={ticket.tecnico}
                         />
-                    )}
-
-                </div>
+                    </div>
+                )}
 
 
             </div>

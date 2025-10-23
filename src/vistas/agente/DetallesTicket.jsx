@@ -265,8 +265,9 @@ const DetallesTicket = () => {
 
 
                 {/*Columna derecha */}
+                {estadoConfirmado !== "CERRADO" && (
                 <div className="col-md-4 ticket-detalles">
-                    {estadoConfirmado !== "CERRADO" && (
+                    
                         <EstadosTicket
                             urgencia={urgencia}
                             impacto={impacto}
@@ -288,8 +289,8 @@ const DetallesTicket = () => {
                             mensaje={mensaje}
 
                         />
-                    )}
                 </div>
+                )}
             </div>
         </div>
     );
