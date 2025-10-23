@@ -42,6 +42,7 @@ const TecnicoDetallesTicket = () => {
     const crearMensaje = async (descripcion, visibilidadTicket, id_ticket) => {
         try {
             await crearAnotacion(token, descripcion, visibilidadTicket, id_ticket)
+            setDescripcionMensaje("");
 
         } catch (error) {
             console.error("Error real al crear mensaje visible:", error);

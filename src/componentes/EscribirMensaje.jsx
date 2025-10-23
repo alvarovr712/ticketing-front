@@ -46,6 +46,15 @@ const EscribirMensaje = ({
                 style={{ resize: "none" }}
                 value={descripcionMensaje}
                 onChange={(e) => setDescripcionMensaje(e.target.value)}
+                //Con esto consigo que al pulsar enter se envie el mensaje tambien y el salto de linea con shift + enter.
+                onKeyDown={(e) => {
+                    if(e.key === "Enter" && !e.shiftKey){
+                        e.preventDefault();
+                        if(descripcionMensaje.trim()){
+                            crearMensaje(descripcionMensaje, visibilidadTicket,ticketId)
+                        }
+                    }
+                }}
             ></textarea>
 
             <div className="text-center">

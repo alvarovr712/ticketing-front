@@ -9,6 +9,7 @@ const ListaMensajes = ({
     guardarEdicion,
     EliminarMensaje
 }) => {
+    const id_perfil = parseInt(localStorage.getItem('perfil'));
 
     return (
         <div className="flex-grow-1 overflow-auto contenedor-mensajes">
@@ -49,10 +50,12 @@ const ListaMensajes = ({
 
                             </div>
                             {/* Botones para editar y borrar cada mensaje */}
+                            {id_perfil !== 2 &&(
                             <div className="acciones-mensaje">
                                 <button className="btn-accion" onClick={() => activarEdicion(anotacion)}>Editar</button>
                                 <button className="btn-accion" onClick={() => EliminarMensaje(anotacion.id)}>Borrar</button>
                             </div>
+                            )}
                         </div>
                     );
                 })}
