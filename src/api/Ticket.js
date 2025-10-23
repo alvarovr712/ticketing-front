@@ -79,3 +79,37 @@ export const editarTicket = async (token, id, datosTicket) => {
     return await respuesta.json();
 }
 
+// ------ OBTENER TODOS LOS TICKET DE UN GRUPO ACTIVOS(SIN RESOLVER) ------
+export const obtenerTicketPorGrupo = async(token, id) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/grupo/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if(!respuesta.ok){
+        throw new Error('Error al obtener los tickets por grupo')
+    }
+
+    return await respuesta.json();
+}
+
+// ------ OBTENER TODOS LOS TICKET DE UN GRUPO RESUELTOS O CERRADOS ------
+
+export const obtenerTicketsPorGrupoResueltos = async(token, id) =>{
+    const respuesta = await fetch(`${BASE_URL}/ticket/grupo/resuelto/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    if(!respuesta.ok){
+        throw new Error('Error al obtener los tickets por grupo')
+    }
+
+    return await respuesta.json();
+}
+

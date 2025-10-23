@@ -79,7 +79,7 @@ const EstadosTicket = ({
                         value={grupo}
                         onChange={(e) => {
                             setModificado(true);
-                            setGrupo(e.target.value); // ✅ CORREGIDO
+                            setGrupo(e.target.value); 
                             verUsuariosGrupo(e);
                         }}
                     >
