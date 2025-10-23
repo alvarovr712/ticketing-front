@@ -26,7 +26,7 @@ const TecnicoDetallesTicket = () => {
         obtenerUnTicket(token, id)
             .then(datos => {
                 setTickets(datos);
-                setEstadoConfirmado(datos.estadoTicket); 
+                setEstadoConfirmado(datos.estadoTicket);
             })
 
             .catch(error => setError(error.message))
@@ -67,7 +67,7 @@ const TecnicoDetallesTicket = () => {
                     />
                     {ticket.estadoTicket !== "RESUELTO" && ticket.estadoTicket !== "CERRADO" && (
                         <div className="d-flex flex-column ">
-                            
+
                             <EscribirMensaje
                                 descripcionMensaje={descripcionMensaje}
                                 setDescripcionMensaje={setDescripcionMensaje}
@@ -83,19 +83,19 @@ const TecnicoDetallesTicket = () => {
                 </div>
 
                 {/*Columna derecha*/}
+                <div className="col-md-4 ticket-detalles">
+                    {estadoConfirmado !== "CERRADO" && (
+                        <EstadosTicketLectura
+                            urgencia={ticket.urgencia}
+                            impacto={ticket.impacto}
+                            prioridad={ticket.prioridad}
+                            estado={ticket.estadoTicket}
+                            grupo={ticket.grupo}
+                            responsable={ticket.tecnico}
+                        />
+                    )}
 
-                {estadoConfirmado !== "CERRADO" && (
-                    <EstadosTicketLectura
-                        urgencia={ticket.urgencia}
-                        impacto={ticket.impacto}
-                        prioridad={ticket.prioridad}
-                        estado={ticket.estadoTicket}
-                        grupo={ticket.grupo}
-                        responsable={ticket.tecnico}
-                    />
-                )}
-
-
+                </div>
 
 
             </div>

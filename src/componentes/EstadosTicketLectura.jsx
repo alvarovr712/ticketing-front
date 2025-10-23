@@ -1,6 +1,6 @@
 const EstadosTicketLectura = ({ urgencia, impacto, prioridad, estado, grupo, responsable }) => {
   return (
-    <div className="col-md-4 ticket-detalles">
+    <>
       <h2 style={{ textAlign: "center" }}>Detalles del ticket</h2>
       <br />
 
@@ -41,7 +41,7 @@ const EstadosTicketLectura = ({ urgencia, impacto, prioridad, estado, grupo, res
           <div className="form-control bg-light">{estado || "No definido"}</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

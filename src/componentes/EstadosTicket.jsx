@@ -19,7 +19,7 @@ const EstadosTicket = ({
     mensaje
 }) => {
     return (
-        <div className="col-md-4 ticket-detalles">
+        <>
             <h2 style={{ textAlign: "center" }}>Detalles del ticket</h2>
             <br />
             {mensaje && (
@@ -135,7 +135,7 @@ const EstadosTicket = ({
                     </button>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

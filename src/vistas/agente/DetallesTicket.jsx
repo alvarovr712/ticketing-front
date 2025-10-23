@@ -206,10 +206,10 @@ const DetallesTicket = () => {
 
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
-    
+
 
     return (
-        
+
 
         <div className="container mt-4">
             <div className="row d-flex">
@@ -265,30 +265,31 @@ const DetallesTicket = () => {
 
 
                 {/*Columna derecha */}
-                {estadoConfirmado !== "CERRADO" && (
-                <EstadosTicket
-                    urgencia={urgencia}
-                    impacto={impacto}
-                    prioridad={prioridad}
-                    grupo={grupo}
-                    usuarioSeleccionado={usuarioSeleccionado}
-                    estadoTicket={estadoTicket}
-                    listagrupos={listagrupos}
-                    usuariosGrupo={usuariosGrupo}
-                    setUrgencia={setUrgencia}
-                    setImpacto={setImpacto}
-                    setPrioridad={setPrioridad}
-                    setGrupo={setGrupo}
-                    setUsuarioSeleccionado={setUsuarioSeleccionado}
-                    setEstadoTicket={setEstadoTicket}
-                    verUsuariosGrupo={verUsuariosGrupo}
-                    ModificarTicket={ModificarTicket}
-                    setModificado={setModificado}
-                    mensaje={mensaje}
+                <div className="col-md-4 ticket-detalles">
+                    {estadoConfirmado !== "CERRADO" && (
+                        <EstadosTicket
+                            urgencia={urgencia}
+                            impacto={impacto}
+                            prioridad={prioridad}
+                            grupo={grupo}
+                            usuarioSeleccionado={usuarioSeleccionado}
+                            estadoTicket={estadoTicket}
+                            listagrupos={listagrupos}
+                            usuariosGrupo={usuariosGrupo}
+                            setUrgencia={setUrgencia}
+                            setImpacto={setImpacto}
+                            setPrioridad={setPrioridad}
+                            setGrupo={setGrupo}
+                            setUsuarioSeleccionado={setUsuarioSeleccionado}
+                            setEstadoTicket={setEstadoTicket}
+                            verUsuariosGrupo={verUsuariosGrupo}
+                            ModificarTicket={ModificarTicket}
+                            setModificado={setModificado}
+                            mensaje={mensaje}
 
-                />
-                )}
-
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );
