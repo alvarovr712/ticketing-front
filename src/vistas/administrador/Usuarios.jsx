@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getUsuarios } from "../../api/Usuarios";
+import UserInfoDialog from "../../componentes/UserInfoDialog";
+import { getUsuario, getUsuarios } from "../../api/Usuarios";
 import Tabla from "../../componentes/Tabla";
+import { Button, Chip } from "@mui/material";
 
 const Usuarios = () => {
 	const [usuarios, setUsuarios] = useState([]);
+	const [openDialog, setOpenDialog] = useState(false);
+	const [user, setUser] = useState({});
 	// const navigate = useNavigate();
 
 	useEffect(() => {
@@ -18,15 +21,24 @@ const Usuarios = () => {
 
 	},[])
 
+	const handleOpenDialog = (id) => { 
+		console.log("Abriendo dialogo para el usuario con id: ", id);
+
+		getUsuario(localStorage.getItem('token'), id)
+		.then((usuario) => {
+			setUser(usuario);
+			setOpenDialog(true);
+		})
+		.catch(err => console.log(err));
+	}
+
+
 	const columns = 
 	[
 		{
-			key: "nombre",
-			label: "Nombre"
-		},
-		{
-			key: "apellidos",
-			label: "Apellidos"
+			key: "fullNombre",
+			label: "Nombre completo",
+			render: (valor, { id, nombre, apellidos }) => <Button variant="text" onClick={() => handleOpenDialog(id)}>{nombre} {apellidos}</Button>
 		},
 		{
 			key: "email",
@@ -35,12 +47,23 @@ const Usuarios = () => {
 		{
 			key: "activo",
 			label: "Activo",
-			render: (valor) => valor ? 'Sí' : 'No'
+			render: (valor) => {
+				valor 
+				? <Chip label="Activo" color="success" /> 
+				: <Chip label="Desactivado" color="error" /> 
+			}
 		}
 	]
 
 	return (
-		<Tabla datos={usuarios} columnas={columns} />
+		<div>
+			<Tabla datos={usuarios} columnas={columns} />
+			<UserInfoDialog 
+				open={openDialog} 
+				close={() => setOpenDialog(false)} 
+				user={user}/>
+		</div>
+		
 	)
 
 };
