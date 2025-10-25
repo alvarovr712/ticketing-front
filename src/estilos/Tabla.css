@@ -177,3 +177,26 @@
   border: 2px solid #dc3545;
   box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
 }
+
+.tr-tooltip {
+  position: relative;
+}
+
+.tr-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--bg-contenedor);
+  color: var(--texto-principal);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 6px var(--sombra-color);
+  white-space: normal;
+  max-width: 300px;
+  width: max-content;
+  z-index: 10;
+  font-size: 0.85rem;
+  text-align: left;
+}

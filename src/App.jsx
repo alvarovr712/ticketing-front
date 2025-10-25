@@ -19,6 +19,7 @@ import AgenteHistorialTickets from "./vistas/agente/AgenteHistorialTickets";
 import TecnicoTickets from "./vistas/tecnico/TecnicoTickets";
 import TecnicoHistorialTickets from "./vistas/tecnico/TecnicoHistorialTickets";
 import TecnicoDetallesTicket from "./vistas/tecnico/TecnicoDetallesTicket";
+import AgenteWorkspace from "./vistas/agente/AgenteWorkspace";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route index element={<AgenteTickets />} />
           <Route path="tickets/:id" element={<DetallesTicket />} />
           <Route path="historial" element={<AgenteHistorialTickets/>}/>
+          <Route path="workspace" element={<AgenteWorkspace/>}/>
         </Route>
 
         {/* SOLICITANTE */}

@@ -28,6 +28,7 @@ const Login = () => {
             localStorage.setItem('perfil', datos.id_perfil);
             localStorage.setItem('email', datos.email);
             localStorage.setItem('id_grupo', datos.id_grupo)
+            localStorage.setItem('id_usuario', datos.id_usuario)
 
             setMensaje('✅ Login correcto');
             setTipoMensaje('ok');

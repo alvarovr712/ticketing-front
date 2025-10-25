@@ -13,7 +13,8 @@ const Tabla = ({ datos, columnas }) => {
             </thead>
             <tbody>
                 {datos.map((fila, index) => (
-                    <tr key={fila.id || index}>
+                   <tr key={fila.id || index} className="tr-tooltip" data-tooltip={fila.descripcion || "Sin descripción"}
+    >
                         {columnas.map(col => (
                             <td key={col.key} data-label={col.label}>
                                 {col.render ? col.render(fila[col.key], fila) : fila[col.key]}
