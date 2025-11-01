@@ -63,18 +63,7 @@ const AgenteTickets = () => {
     {
       key: "asunto",
       label: "Asunto",
-      render: (valor, fila) => (
-        <Link
-          to={`${fila.id}`}
-          style={{
-            color: "black",
-            textDecoration: "none",
-            fontWeight: "bold"
-          }}
-        >
-          {valor}
-        </Link>
-      )
+      
     },
     {
       key: "estadoTicket",

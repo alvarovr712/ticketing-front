@@ -1,4 +1,4 @@
-/* === CONTENEDOR PRINCIPAL === */
+
 .workspace-container {
   min-height: 90vh;
   background-color: var(--bg-contenedor);
@@ -8,14 +8,14 @@
   border-radius: 0.5rem;
 }
 
-/* === COLUMNAS === */
+
 .workspace-column {
   border-left: 1px solid var(--borde-suave);
   border-right: 1px solid var(--borde-suave);
   padding: 0 1rem;
 }
 
-/* === TARJETAS === */
+
 .workspace-card {
   border: none;
   transition: transform 0.2s ease;
@@ -29,7 +29,7 @@
 .workspace-card-body {
   padding: 1rem;
   border-radius: 0.25rem;
-  color: var(--texto-principal); /* Texto negro en modo claro */
+  color: var(--texto-principal); 
 }
 
 .workspace-card-body a {
@@ -38,14 +38,14 @@
   font-weight: bold;
 }
 
-/* === SCROLL EN ÁREA DE COLUMNAS === */
+
 .workspace-scroll-area {
   max-height: 70vh;
   overflow-y: auto;
   padding-right: 1rem;
 }
 
-/* === ESTILOS POR TIPO DE TICKET === */
+/* Estilos de las cards */
 .workspace-card-body.ticket-agente {
   background-color: var(--bg-activo-sutil);
 }
@@ -58,14 +58,14 @@
   background-color: #198754;
 }
 
-/* === MODO OSCURO === */
+/* Modo oscuro */
 body.dark-mode .workspace-container {
   background-color: var(--bg-contenedor);
   color: var(--texto-principal);
 }
 
 body.dark-mode .workspace-card-body {
-  color: var(--texto-secundario); /* Texto blanco en modo oscuro */
+  color: var(--texto-secundario); 
 }
 
 body.dark-mode .workspace-card-body a {
