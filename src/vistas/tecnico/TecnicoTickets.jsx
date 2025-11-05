@@ -66,13 +66,23 @@ const TecnicoTickets = () => {
         }
     ];
 
+    const ticketsOrdenados = [...tickets].sort((a, b) => {
+        const esUrgenteA = a.prioridad?.toLowerCase() === "urgente";
+        const esUrgenteB = b.prioridad?.toLowerCase() === "urgente";
+
+        if (esUrgenteA && !esUrgenteB) return -1;
+        if (!esUrgenteA && esUrgenteB) return 1;
+
+        return new Date(a.fechaCreacion) - new Date(b.fechaCreacion);
+    });
+
 
 
     return (
         <div>
             <h2>Tickets</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <Tabla datos={tickets} columnas={columnas} />
+            <Tabla datos={ticketsOrdenados} columnas={columnas} />
         </div>
     )
 }

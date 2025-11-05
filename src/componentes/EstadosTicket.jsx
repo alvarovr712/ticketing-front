@@ -67,6 +67,7 @@ const EstadosTicket = ({
                         <option value="baja">BAJA</option>
                         <option value="media">MEDIA</option>
                         <option value="alta">ALTA</option>
+                        <option value="urgente">URGENTE</option>
                     </select>
                 </div>
 

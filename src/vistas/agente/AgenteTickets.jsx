@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { asignarTicket, desasignarTicket, obtenerTodosLosTickets } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
-import { Link } from "react-router-dom";
+
 
 
 const AgenteTickets = () => {
@@ -96,11 +96,21 @@ const AgenteTickets = () => {
     }
   ];
 
+  const ticketsOrdenados = [...tickets].sort((a, b) => {
+    const esUrgenteA = a.prioridad?.toLowerCase() === "urgente";
+    const esUrgenteB = b.prioridad?.toLowerCase() === "urgente";
+
+    if(esUrgenteA && !esUrgenteB) return -1;
+    if(!esUrgenteA && esUrgenteB) return 1;
+
+    return new Date(a.fechaCreacion) - new Date(b.fechaCreacion);
+  });
+
   return (
     <div className="container my-4">
       <h2>Tickets</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <Tabla datos={tickets} columnas={columnas} />
+      <Tabla datos={ticketsOrdenados} columnas={columnas} />
     </div>
   );
 };

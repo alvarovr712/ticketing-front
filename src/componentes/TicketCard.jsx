@@ -12,7 +12,7 @@ const TicketCard = ({ ticket, tipo, onDesasignar }) => {
                 onClick={() => onDesasignar(ticket.id)}
                 aria-label="Desasignar"
             ></button>
-            <div className={`workspace-card-body ticket-${tipo}`}>
+            <div className={`workspace-card-body ticket-${tipo} ${ticket.prioridad?.toLowerCase() === "urgente" ? "ticket-urgente" : ""}`}>
                 <h5 className="card-title">
                     <Link
                         to={`/agente/tickets/${ticket.id}`}

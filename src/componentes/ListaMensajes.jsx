@@ -15,7 +15,7 @@ const ListaMensajes = ({
         <div className="flex-grow-1 overflow-auto contenedor-mensajes">
 
             {[...anotaciones]
-                .sort((a, b) => a.id - b.id)
+                .sort((a, b) => b.id - a.id)
                 .map((anotacion, index) => {
                     const perfil = anotacion.usuario.perfil.nombre
                     const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;

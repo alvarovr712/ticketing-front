@@ -72,4 +72,11 @@ body.dark-mode .workspace-card-body a {
   color: inherit;
 }
 
+.workspace-card-body.ticket-urgente {
+  background-color: #7e050f ;
+  border: 1px solid #dc3545;
+  box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
+}
+
+
 

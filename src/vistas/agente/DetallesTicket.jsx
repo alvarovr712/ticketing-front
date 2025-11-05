@@ -207,6 +207,8 @@ const DetallesTicket = () => {
     if (error) return <p style={{ color: "red" }}>{error}</p>
     if (!ticket) return <p> Cargando ticket...</p>
 
+    
+
 
     return (
 
