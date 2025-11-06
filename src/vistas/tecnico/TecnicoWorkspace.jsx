@@ -12,8 +12,7 @@ const TecnicoWorkspace = () => {
             const token = localStorage.getItem("token");
             const id_usuario = localStorage.getItem("id_usuario");
 
-            console.log("Token:", token);
-            console.log("ID Usuario:", id_usuario);
+            
 
             if (!token || !id_usuario) return;
 
