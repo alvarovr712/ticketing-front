@@ -80,8 +80,8 @@ export const editarTicket = async (token, id, datosTicket) => {
 }
 
 // ------ OBTENER TODOS LOS TICKET DE UN GRUPO ACTIVOS(SIN RESOLVER) ------
-export const obtenerTicketPorGrupo = async (token, id) => {
-    const respuesta = await fetch(`${BASE_URL}/ticket/grupo/${id}`, {
+export const obtenerTicketPorGrupo = async (token, id_grupo, id_usuario) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/grupo/${id_grupo}?id_usuario=${id_usuario}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -113,7 +113,9 @@ export const obtenerTicketsPorGrupoResueltos = async (token, id) => {
     return await respuesta.json();
 }
 
-// ------ ASIGNAR UN RESPONSABLE AL TICKET PARA QUE LO PUEDA VISUALIZAR EN SU WORKSPACE Y TRABAJAR CON EL  ------
+        // +++++++++  WORKSPACE AGENTE +++++++++  //
+
+// ------ ASIGNAR UN RESPONSABLE AL TICKET PARA QUE EL AGENTE LO PUEDA VISUALIZAR EN SU WORKSPACE Y TRABAJAR CON EL  ------
 
 export const asignarTicket = async (token, id_ticket, id_usuario) => {
     const respuesta = await fetch(`${BASE_URL}/ticket/asignar/${id_ticket}?id_usuario=${id_usuario}`, {
@@ -131,7 +133,7 @@ export const asignarTicket = async (token, id_ticket, id_usuario) => {
     return await respuesta.json();
 };
 
-// ------ DESASIGNAR PARA SACARLO DEL WORKSPACE Y QUE OTROS AGENTES PUEDAN TRABAJAR CON EL  ------
+// ------ DESASIGNAR PARA SACARLO DEL WORKSPACE DE AGENTE Y QUE OTROS AGENTES PUEDAN TRABAJAR CON EL  ------
 export const desasignarTicket = async (token, id_ticket) => {
     const respuesta = await fetch(`${BASE_URL}/ticket/desasignar/${id_ticket}`, {
         method: 'PUT',
@@ -200,6 +202,102 @@ export const dropearTicket = async (token, id_ticket) => {
 
   return await respuesta.text(); 
 };
+                // +++++++++  WORKSPACE TECNICO +++++++++  //
+
+// ------ ASIGNAR UN RESPONSABLE AL TICKET PARA QUE EL TECNICO LO PUEDA VISUALIZAR EN SU WORKSPACE Y TRABAJAR CON EL  ------
+
+export const asignarTicketTecnico = async (token, id_ticket, id_usuario) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/asignar/tecnico/${id_ticket}?id_usuario=${id_usuario}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!respuesta.ok) {
+        throw new Error('Error al asignar el ticket');
+    }
+
+    return await respuesta.json();
+};
+
+// ------ DESASIGNAR PARA SACARLO DEL WORKSPACE DE TECNICO Y QUE OTROS AGENTES PUEDAN TRABAJAR CON EL  ------
+export const desasignarTicketTecnico = async (token, id_ticket) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/desasignar/tecnico/${id_ticket}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!respuesta.ok) {
+        throw new Error('Error al desasignar el ticket');
+    }
+
+    return await respuesta.json();
+};
+
+// ------ OBTENER TODOS LOS TICKETS ASIGNADOS A UN TECNICO PARA PODER VERLOS EN SU WORKSPACE  ------
+export const obtenerTicketsAsignadosTecnico = async (token, id_usuario) => {
+  const url = `${BASE_URL}/ticket/workspace/tecnico?id_usuario=${id_usuario}`;
+  console.log("Petición a:", url);
+  console.log("Token:", token);
+
+  const respuesta = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!respuesta.ok) {
+    const errorText = await respuesta.text();
+    console.error("Respuesta del servidor:", errorText);
+    throw new Error(`Error ${respuesta.status}: ${errorText}`);
+  }
+
+  return await respuesta.json();
+};
+
+// ------ LIBERAR LOS TICKEST PARA QUE AL LOGEAR NO QUEDEN ASIGNADOS A UN TECNICO SINO QUE LOS PUEDA VOLVER A VER CUALQUIER TECNICO  ------
+
+export const liberarTicketsTecnico = async (token, id_usuario) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/liberar/tecnico?id_usuario=${id_usuario}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!respuesta.ok) {
+        throw new Error("Error al liberar tickets");
+    }
+
+    return await respuesta.text();
+};
+
+// ------ DROPEAR TICKET TECNICO ------
+
+export const dropearTicketTecnico = async (token, id_ticket) => {
+  const respuesta = await fetch(`${BASE_URL}/ticket/dropear/tecnico?id_ticket=${id_ticket}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!respuesta.ok) {
+    throw new Error("Error al dropear el ticket");
+  }
+
+  return await respuesta.text(); 
+};
+
 
 
 

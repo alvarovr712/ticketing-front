@@ -7,6 +7,7 @@ import TicketCard from "../../componentes/TicketCard";
 
 const AgenteWorkspace = () => {
   const [tickets, setTickets] = useState([]);
+  const tipoVista = "agente";
 
   useEffect(() => {
     const cargarTickets = async () => {
@@ -57,14 +58,14 @@ const AgenteWorkspace = () => {
   const ticketsSolicitante = tickets.filter(t => t.responde === "solicitante");
   const ticketsTecnico = tickets.filter(t => t.responde === "tecnico");
 
-  const renderColumn = (titulo, tickets, tipo) => (
-    <div id={`columna-${tipo}`} className="col-md-4 workspace-column">
+  const renderColumn = (titulo, tickets) => (
+    <div  className="col-md-4 workspace-column">
       <h4 className="text-center mb-3">{titulo}</h4>
       {tickets.length === 0 ? (
         <div className="alert alert-secondary">Sin tickets</div>
       ) : (
         tickets.map(ticket => (
-          <TicketCard key={ticket.id} ticket={ticket} tipo={tipo} onDesasignar={dropearUnTicket} />
+          <TicketCard key={ticket.id} ticket={ticket} tipo={tipoVista} onDesasignar={dropearUnTicket} />
         ))
       )}
     </div>

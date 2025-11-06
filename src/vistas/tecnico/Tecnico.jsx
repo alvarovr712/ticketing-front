@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import MenuMovil from "../../componentes/MenuMovil";
 import MenuEscritorio from "../../componentes/MenuEscritorio";
+import { liberarTicketsTecnico } from "../../api/Ticket";
 
 const Tecnico = () =>{
 
@@ -9,13 +10,26 @@ const Tecnico = () =>{
 
     const contenidoMenu = [
         {nombre:'Tickets', ruta:'/tecnico/tickets', icono:'🎫'},
-        {nombre:'Historial Tickets', ruta:'/tecnico/historial', icono:'🕝'}
+        {nombre:'Historial Tickets', ruta:'/tecnico/historial', icono:'🕝'},
+        { nombre: 'WorkSpace', ruta: '/tecnico/workspace', icono: '💼' }
     ]
 
-    const logout = () => {
-        localStorage.clear();
-        navigate('/');
-    };
+    const logout = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const id_usuario = localStorage.getItem("id_usuario");
+    
+                if (token && id_usuario) {
+                    await liberarTicketsTecnico(token, id_usuario);
+                }
+            } catch (error) {
+                console.error("Error al liberar tickets al cerrar sesión:", error);
+            }
+    
+            localStorage.clear();
+            navigate('/');
+        };
+    
 
     return (
         <div className="d-flex flex-column flex-md-row" style={{ minHeight: '100vh', fontFamily: 'sans-serif' }}>

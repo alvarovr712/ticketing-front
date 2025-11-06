@@ -45,18 +45,13 @@
   padding-right: 1rem;
 }
 
-/* Estilos de las cards */
-.workspace-card-body.ticket-agente {
-  background-color: var(--bg-activo-sutil);
-}
 
-.workspace-card-body.ticket-solicitante {
-  background-color: #990a7a;
-}
+/*Estilos de las cards*/
+.ticket-urgente { background-color: #7e050f; }
+.ticket-alta { background-color: #ffc107; }
+.ticket-media { background-color: #198754; }
+.ticket-baja { background-color: #0d6efd; }
 
-.workspace-card-body.ticket-tecnico {
-  background-color: #198754;
-}
 
 /* Modo oscuro */
 body.dark-mode .workspace-container {
