@@ -1,30 +1,27 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { asignarTicketTecnico, desasignarTicketTecnico, obtenerTicketPorGrupo } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
 import { Link } from "react-router-dom";
-
 
 const TecnicoTickets = () => {
 
   const [tickets, setTickets] = useState([]);
   const [error, setError] = useState("");
+  const id_usuario = parseInt(localStorage.getItem('id_usuario'));
 
+  const token = localStorage.getItem('token');
+  const id_grupo = localStorage.getItem('id_grupo');
+
+ 
+  const cargarTickets = () => {
+    obtenerTicketPorGrupo(token, id_grupo, id_usuario)
+      .then(datos => setTickets(datos))
+      .catch(error => setError(error.message));
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const id_grupo = localStorage.getItem('id_grupo');
-    const id_usuario = localStorage.getItem('id_usuario');
-
-    const cargarTickets = () => {
-      obtenerTicketPorGrupo(token, id_grupo, id_usuario)
-        .then(datos => setTickets(datos))
-        .catch(error => setError(error.message));
-    };
-
     cargarTickets();
-
     const intervalo = setInterval(cargarTickets, 10000);
-
     return () => clearInterval(intervalo);
   }, []);
 
@@ -33,9 +30,7 @@ const TecnicoTickets = () => {
       key: "favorito",
       label: "★",
       render: (_, fila) => {
-        const token = localStorage.getItem("token");
-        const id_usuario = localStorage.getItem("id_usuario");
-        const esResponsable = fila.responsable_tecnico === parseInt(id_usuario);
+        const esResponsable = parseInt(fila.responsable_tecnico) === id_usuario;
 
         const manejarClick = () => {
           const accion = esResponsable
@@ -43,11 +38,7 @@ const TecnicoTickets = () => {
             : asignarTicketTecnico(token, fila.id, id_usuario);
 
           accion
-            .then(ticketActualizado => {
-              setTickets(prev =>
-                prev.map(t => (t.id === ticketActualizado.id ? ticketActualizado : t))
-              );
-            })
+            .then(() => cargarTickets()) 
             .catch(error => setError(error.message));
         };
 
@@ -70,7 +61,8 @@ const TecnicoTickets = () => {
     },
     { key: "id", label: "ID" },
     {
-      key: "asunto", label: "Asunto",
+      key: "asunto",
+      label: "Asunto",
       render: (valor, fila) => (
         <Link to={`${fila.id}`} style={{ color: "black", textDecoration: "none", fontWeight: "bold" }}>
           {valor}
@@ -115,17 +107,22 @@ const TecnicoTickets = () => {
     }
   ];
 
+  
   const ticketsOrdenados = [...tickets].sort((a, b) => {
-    const esUrgenteA = a.prioridad?.toLowerCase() === "urgente";
-    const esUrgenteB = b.prioridad?.toLowerCase() === "urgente";
+    const esUrgenteA = a.prioridad?.trim().toLowerCase() === "urgente";
+    const esUrgenteB = b.prioridad?.trim().toLowerCase() === "urgente";
 
     if (esUrgenteA && !esUrgenteB) return -1;
     if (!esUrgenteA && esUrgenteB) return 1;
 
-    return new Date(a.fechaCreacion) - new Date(b.fechaCreacion);
+    const esResponsableA = parseInt(a.responsable_tecnico) === id_usuario;
+    const esResponsableB = parseInt(b.responsable_tecnico) === id_usuario;
+
+    if (esResponsableA && !esResponsableB) return -1;
+    if (!esResponsableA && esResponsableB) return 1;
+
+    return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
   });
-
-
 
   return (
     <div>
@@ -140,7 +137,6 @@ const TecnicoTickets = () => {
       <Tabla datos={ticketsOrdenados} columnas={columnas} mostrarDescripcion={true} />
     </div>
   );
-
-}
+};
 
 export default TecnicoTickets;

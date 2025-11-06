@@ -241,11 +241,8 @@ export const desasignarTicketTecnico = async (token, id_ticket) => {
 
 // ------ OBTENER TODOS LOS TICKETS ASIGNADOS A UN TECNICO PARA PODER VERLOS EN SU WORKSPACE  ------
 export const obtenerTicketsAsignadosTecnico = async (token, id_usuario) => {
-  const url = `${BASE_URL}/ticket/workspace/tecnico?id_usuario=${id_usuario}`;
-  console.log("Petición a:", url);
-  console.log("Token:", token);
-
-  const respuesta = await fetch(url, {
+  
+  const respuesta = await fetch(`${BASE_URL}/ticket/workspace/tecnico?id_usuario=${id_usuario}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -254,9 +251,7 @@ export const obtenerTicketsAsignadosTecnico = async (token, id_usuario) => {
   });
 
   if (!respuesta.ok) {
-    const errorText = await respuesta.text();
-    console.error("Respuesta del servidor:", errorText);
-    throw new Error(`Error ${respuesta.status}: ${errorText}`);
+    throw new Error('Error al obtener tickets asignados');
   }
 
   return await respuesta.json();
