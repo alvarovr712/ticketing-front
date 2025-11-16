@@ -29,6 +29,19 @@ export const getUsuario = async (token, id) =>
 		: await response.json();
 }
 
+export const actualizarUsuario = async (token, id, usuario) => {
+	const response = await fetch(`${BASE_URL}/usuario/${id}/editar`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`
+		},
+		body: JSON.stringify(usuario)
+	})	
+
+	return response.ok;
+}
+
 // OBTENER TODOS LOS USUARIOS DE UN GRUPO
 
 export const obtenerUsuariosPorGrupo = async (token, id) => {

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import UserInfoDialog from "../../componentes/UserInfoDialog";
+import NewUserDialog from "../../componentes/NewUserDialog";
 import { getUsuario, getUsuarios } from "../../api/Usuarios";
 import Tabla from "../../componentes/Tabla";
 import { Button, Chip } from "@mui/material";
+
 
 const Usuarios = () => {
 	const [usuarios, setUsuarios] = useState([]);
@@ -14,16 +16,12 @@ const Usuarios = () => {
 		const token = localStorage.getItem('token');
 
 		getUsuarios(token)
-		.then((usuarios) => {
-			setUsuarios(usuarios);
-		})
+		.then(usuarios  =>  setUsuarios(usuarios))
 		.catch(err => console.log(err)); 
 
 	},[])
 
 	const handleOpenDialog = (id) => { 
-		console.log("Abriendo dialogo para el usuario con id: ", id);
-
 		getUsuario(localStorage.getItem('token'), id)
 		.then((usuario) => {
 			setUser(usuario);
@@ -47,21 +45,27 @@ const Usuarios = () => {
 		{
 			key: "activo",
 			label: "Activo",
-			render: (valor) => {
-				valor 
+			render: (valor) => 
+				(valor 
 				? <Chip label="Activo" color="success" /> 
-				: <Chip label="Desactivado" color="error" /> 
-			}
+				: <Chip label="Desactivado" color="error" />)
+			
 		}
 	]
 
 	return (
 		<div>
 			<Tabla datos={usuarios} columnas={columns} />
+
 			<UserInfoDialog 
 				open={openDialog} 
 				close={() => setOpenDialog(false)} 
-				user={user}/>
+				user={user}
+			/>
+
+			<NewUserDialog 
+			
+			/>
 		</div>
 		
 	)
