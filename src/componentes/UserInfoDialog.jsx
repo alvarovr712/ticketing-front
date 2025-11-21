@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogTitle, Grid, TextField } from "@mui/material";
+import { Button, Dialog, DialogTitle, Grid, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { actualizarUsuario } from "../api/Usuarios";
 
 const userInfoDialog = ({ user, open, close }) => {
 	const [userData, setUserData] = useState({ ...user });
+	const [grupos, setGrupos] = useState(localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : []);
 	const [boxSize, setBoxSize] = useState(6);
 	const [esSolicitante, setEsSolicitante] = useState(false);
 	const [editMode, setEditMode] = useState(false);
@@ -22,7 +23,7 @@ const userInfoDialog = ({ user, open, close }) => {
 			"ADMIN": 1,
 			"TECNICO": 2,
 			"AGENTE": 3,
-			"SOLICITANTE": 4,			
+			"SOLICITANTE": 4,
 		}
 
 		userData.perfil = perfiles[userData.perfil];
@@ -30,26 +31,30 @@ const userInfoDialog = ({ user, open, close }) => {
 		console.log("Guardando usuario...", userData);
 
 		actualizarUsuario(localStorage.getItem('token'), userData.id, userData)
-		.then((ok) => {
-			if (ok) {
-				console.log("Usuario actualizado correctamente.");
-				setEditMode(false);
+			.then((ok) => {
+				if (ok) {
+					console.log("Usuario actualizado correctamente.");
+					setEditMode(false);
 
-				handleClose();
-			} else {
-				console.log("Error al actualizar el usuario.");
-			}
+					handleClose();
+				} else {
+					console.log("Error al actualizar el usuario.");
+				}
 
-			
-		}).catch((err) => {
-			console.log("Error al actualizar el usuario:", err);
-		});
+
+			}).catch((err) => {
+				console.log("Error al actualizar el usuario:", err);
+			});
 
 	}
 
 	const handleNoSave = () => {
 		setUserData({ ...user });
 		setEditMode(false);
+	}
+
+	const handleChosenGrupo = (event) => {
+		setUserData({ ...userData, grupo: event.target.value });
 	}
 
 	useEffect(() => {
@@ -94,6 +99,7 @@ const userInfoDialog = ({ user, open, close }) => {
 				<Grid
 					item
 					size={2}
+
 				>
 					{!editMode && (
 						<Button variant="contained" onClick={() => setEditMode(true)}>Editar</Button>
@@ -172,17 +178,19 @@ const userInfoDialog = ({ user, open, close }) => {
 
 				{!esSolicitante && (
 					<Grid item size={boxSize}>
-						<TextField
-							label="Grupo"
-							variant="standard"
-							defaultValue={user.grupo}
-							onChange={({ target }) => setUserData({ ...userData, grupo: target.value })}
+						<Select
+							defaultValue={user.idGrupo}
+							onChange={handleChosenGrupo}
 							slotProps={{
 								input: {
 									readOnly: !editMode,
 								}
 							}}
-						/>
+						>
+							{grupos.map(({ id, nombre }) => (
+								<MenuItem key={id} value={id}>{nombre}</MenuItem>
+							))}
+						</Select>
 					</Grid>
 				)}
 
@@ -217,7 +225,7 @@ const userInfoDialog = ({ user, open, close }) => {
 						/>
 					</Grid>
 				)}
-				
+
 				{esSolicitante && (
 					<Grid item size={boxSize}>
 						<TextField

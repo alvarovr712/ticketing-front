@@ -23,47 +23,49 @@ import AgenteWorkspace from "./vistas/agente/AgenteWorkspace";
 import TecnicoWorkspace from "./vistas/tecnico/TecnicoWorkspace";
 
 function App() {
-  return (
-    <div className="app-container">
-      <ThemeToggleButton />
-      <Routes>
-        {/* LOGIN */}
-        <Route path="/" element={<Login />} />
+	return (
+		<div className="app-container">
+			<ThemeToggleButton />
+			<Routes>
+				{/* LOGIN */}
+				<Route path="/" element={<Login />} />
 
-        {/* ADMINISTRADOR */}
-        <Route path="/administrador" element={<Administrador />}>
-          <Route path="usuarios" element={<Usuarios />} />
-          <Route path="usuarios/:usuarioId" element={<TicketsUsuario />} />
-        </Route>
+				{/* ADMINISTRADOR */}
+				<Route path="/administrador" element={<Administrador />}>
+					<Route path="usuarios" element={<Usuarios />} />
+					<Route path="usuarios/:usuarioId" element={<TicketsUsuario />} />
+					<Route path="tickets" element={<AgenteTickets />} />
+					<Route path="tickets/:id" element={<DetallesTicket />} />
+				</Route>
 
-        {/* AGENTE */}
-        <Route path="/agente" element={<Agente />}>
-          <Route path="tickets" element={<AgenteTickets />} />
-          <Route index element={<AgenteTickets />} />
-          <Route path="tickets/:id" element={<DetallesTicket />} />
-          <Route path="historial" element={<AgenteHistorialTickets/>}/>
-          <Route path="workspace" element={<AgenteWorkspace/>}/>
-        </Route>
+				{/* AGENTE */}
+				<Route path="/agente" element={<Agente />}>
+					<Route path="tickets" element={<AgenteTickets />} />
+					<Route index element={<AgenteTickets />} />
+					<Route path="tickets/:id" element={<DetallesTicket />} />
+					<Route path="historial" element={<AgenteHistorialTickets/>}/>
+					<Route path="workspace" element={<AgenteWorkspace/>}/>
+				</Route>
 
-        {/* SOLICITANTE */}
-        <Route path="/solicitante" element={<Solicitante />}>
-          <Route path="tickets" element={<TicketSolicitante />} />
-          <Route path="tickets/:id" element={<DetallesTicketSolicitante />} />
-        </Route>
+				{/* SOLICITANTE */}
+				<Route path="/solicitante" element={<Solicitante />}>
+					<Route path="tickets" element={<TicketSolicitante />} />
+					<Route path="tickets/:id" element={<DetallesTicketSolicitante />} />
+				</Route>
 
 
-        {/* TECNICO */}
-        <Route path="/tecnico" element={<Tecnico />} >
-          <Route path="tickets" element={<TecnicoTickets/>} />
-          <Route path="historial" element={<TecnicoHistorialTickets/>}/>
-          <Route path="tickets/:id" element={<TecnicoDetallesTicket/>}/>
-          <Route path="workspace" element={<TecnicoWorkspace/>}/>
-        
-        </Route>
+				{/* TECNICO */}
+				<Route path="/tecnico" element={<Tecnico />} >
+					<Route path="tickets" element={<TecnicoTickets/>} />
+					<Route path="historial" element={<TecnicoHistorialTickets/>}/>
+					<Route path="tickets/:id" element={<TecnicoDetallesTicket/>}/>
+					<Route path="workspace" element={<TecnicoWorkspace/>}/>
+				
+				</Route>
 
-      </Routes>
-    </div>
-  );
+			</Routes>
+		</div>
+	);
 }
 
 export default App;

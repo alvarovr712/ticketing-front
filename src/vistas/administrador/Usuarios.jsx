@@ -4,13 +4,17 @@ import NewUserDialog from "../../componentes/NewUserDialog";
 import { getUsuario, getUsuarios } from "../../api/Usuarios";
 import Tabla from "../../componentes/Tabla";
 import { Button, Chip } from "@mui/material";
-
+import { getGrupos } from "../../api/Grupos";
 
 const Usuarios = () => {
 	const [usuarios, setUsuarios] = useState([]);
-	const [openDialog, setOpenDialog] = useState(false);
+	const [openUserInfoDialog, setOpenUserInfoDialog] = useState(false);
+	const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
 	const [user, setUser] = useState({});
-	// const navigate = useNavigate();
+
+	const getGroups = () => {
+		return getGrupos(localStorage.getItem('token'))
+	}
 
 	useEffect(() => {
 		const token = localStorage.getItem('token');
@@ -19,17 +23,24 @@ const Usuarios = () => {
 		.then(usuarios  =>  setUsuarios(usuarios))
 		.catch(err => console.log(err)); 
 
+		getGroups()
+		.then(grupos => {
+			const g = [{id:0, nombre: "Indicar Grupo Soporte"} ,...grupos]; 
+
+			localStorage.setItem('grupos', JSON.stringify(g));
+		})
 	},[])
 
 	const handleOpenDialog = (id) => { 
 		getUsuario(localStorage.getItem('token'), id)
 		.then((usuario) => {
 			setUser(usuario);
-			setOpenDialog(true);
+
+			console.log("Usuario seleccionado:", usuario);
+			setOpenUserInfoDialog(true);
 		})
 		.catch(err => console.log(err));
 	}
-
 
 	const columns = 
 	[
@@ -49,22 +60,28 @@ const Usuarios = () => {
 				(valor 
 				? <Chip label="Activo" color="success" /> 
 				: <Chip label="Desactivado" color="error" />)
-			
 		}
 	]
 
 	return (
 		<div>
+			<Button 
+				variant="contained" 
+				onClick={() => setOpenNewUserDialog(true)}
+			>
+				Nuevo usuario
+			</Button>
 			<Tabla datos={usuarios} columnas={columns} />
 
 			<UserInfoDialog 
-				open={openDialog} 
-				close={() => setOpenDialog(false)} 
+				open={openUserInfoDialog} 
+				close={() => setOpenUserInfoDialog(false)} 
 				user={user}
 			/>
 
 			<NewUserDialog 
-			
+				open={openNewUserDialog} 
+				close={() => setOpenNewUserDialog(false)}
 			/>
 		</div>
 		
