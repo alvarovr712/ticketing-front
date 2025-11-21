@@ -11,12 +11,18 @@ const DetallesTicketSolicitante = () => {
   const [vistaActiva, setVistaActiva] = useState("mensajes");
   const [descripcionMensaje, setDescripcionMensaje] = useState("");
 
- 
   const cargarTicket = () => {
     const token = localStorage.getItem("token");
+
     obtenerUnTicket(token, id)
       .then((datos) => {
+        // Aseguramos que existan arrays aunque el ticket venga vacío
+        datos.anotaciones = datos.anotaciones || [];
+        datos.historiales = datos.historiales || [];
+
+        // Ordenar anotaciones por fecha
         datos.anotaciones.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
         setTicket(datos);
       })
       .catch((err) => setError(err.message));
@@ -28,12 +34,13 @@ const DetallesTicketSolicitante = () => {
     return () => clearInterval(intervalo);
   }, [id]);
 
-
   const crearMensaje = async () => {
     if (!descripcionMensaje.trim()) return;
+
     const token = localStorage.getItem("token");
+
     try {
-      await crearAnotacion(token, descripcionMensaje, 1, ticket.id); 
+      await crearAnotacion(token, descripcionMensaje, 1, ticket.id); // 1 = mensaje público
       setDescripcionMensaje("");
       cargarTicket();
     } catch (error) {
@@ -49,7 +56,8 @@ const DetallesTicketSolicitante = () => {
     <div className="container mt-4">
       <div className="row d-flex">
         <div className="col-md-8 d-flex flex-column" style={{ height: "90vh" }}>
-          {/* 🧾 Descripción del ticket */}
+
+          {/* ENCABEZADO */}
           <div className="ticket-descripcion mb-2">
             <div className="row mb-2">
               <div className="col-12 col-md-6">
@@ -58,18 +66,12 @@ const DetallesTicketSolicitante = () => {
                   <span className="fw-normal ms-2">{ticket.asunto}</span>
                 </h5>
               </div>
+
               <div className="col-12 col-md-6">
                 <h5>
                   <strong>Fecha de creación:</strong>{" "}
                   <span className="fw-normal ms-2">
-                    {new Date(ticket.fechaCreacion).toLocaleString("es-ES", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                    h
+                    {new Date(ticket.fechaCreacion).toLocaleString("es-ES")}
                   </span>
                 </h5>
               </div>
@@ -79,13 +81,13 @@ const DetallesTicketSolicitante = () => {
             <p>{ticket.descripcion}</p>
           </div>
 
-          {/*  Tabs */}
+          {/* TABS */}
           <ul className="nav nav-tabs ticket-tabs">
             <li className="nav-item">
               <span
                 className={`nav-link ${vistaActiva === "mensajes" ? "active" : ""}`}
-                style={{ cursor: "pointer" }}
                 onClick={() => setVistaActiva("mensajes")}
+                style={{ cursor: "pointer" }}
               >
                 Mensajes
               </span>
@@ -93,68 +95,57 @@ const DetallesTicketSolicitante = () => {
             <li className="nav-item">
               <span
                 className={`nav-link ${vistaActiva === "actividad" ? "active" : ""}`}
-                style={{ cursor: "pointer" }}
                 onClick={() => setVistaActiva("actividad")}
+                style={{ cursor: "pointer" }}
               >
                 Actividad
               </span>
             </li>
           </ul>
 
-          {/* Mensajes */}
+          {/* --- MENSAJES --- */}
           {vistaActiva === "mensajes" ? (
             <div className="flex-grow-1 overflow-auto contenedor-mensajes">
-              {ticket.anotaciones && ticket.anotaciones.length > 0 ? (
-                ticket.anotaciones
-                  .filter((a) => a.visibilidadTicket === 1) // Solo mensajes públicos
-                  .sort((a, b) => a.id - b.id)
-                  .map((anotacion, index) => {
-                    const nombre = `${anotacion.usuario.nombre} ${anotacion.usuario.apellidos}`;
-                    const perfil = anotacion.usuario.perfil.nombre;
-                    const fecha = new Date(anotacion.fecha).toLocaleString("es-ES", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    });
-                    return (
-                      <div key={index} className="mensaje publico">
-                        <div className="cabecera">
-                          <strong>{nombre}</strong> - {perfil} , {fecha}
-                        </div>
-                        <div className="contenido">
-                          <p>{anotacion.descripcion}</p>
-                        </div>
+              {ticket.anotaciones
+                .filter((a) => a.visibilidadTicket === 1)
+                .map((anotacion) => {
+                  const usuario = anotacion.usuario || {};
+                  const nombre = `${usuario.nombre || ""} ${usuario.apellidos || ""}`;
+                  const perfil = usuario.perfil?.nombre || "";
+                  const fecha = new Date(anotacion.fecha).toLocaleString("es-ES");
+
+                  return (
+                    <div key={anotacion.id} className="mensaje publico">
+                      <div className="cabecera">
+                        <strong>{nombre}</strong> - {perfil} , {fecha}
                       </div>
-                    );
-                  })
-              ) : (
-                <p className="text-muted">No hay mensajes aún.</p>
-              )}
+                      <div className="contenido">
+                        <p>{anotacion.descripcion}</p>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           ) : (
-            //  Actividad
+            /* --- ACTIVIDAD --- */
             <div className="flex-grow-1 overflow-auto border rounded p-4 mb-2 ticket-actividad">
-              <h5 className="text-center mb-4" style={{ fontWeight: "bold", textDecoration: "underline" }}>
+              <h5 className="text-center mb-4" style={{ textDecoration: "underline" }}>
                 Actividad del ticket
               </h5>
+
               <ul className="list-unstyled">
                 <li className="mb-3">
-                  🟢 <strong>Ticket creado el {new Date(ticket.fechaCreacion).toLocaleDateString("es-ES")}</strong>
+                  🟢 <strong>Ticket creado el {new Date(ticket.fechaCreacion).toLocaleString("es-ES")}</strong>
                 </li>
-                {ticket.historiales?.map((h, i) => {
-                  const nombre = `${h.usuario.nombre} ${h.usuario.apellidos}`;
-                  const perfil = h.usuario.perfil.nombre;
-                  const fecha = new Date(h.fecha).toLocaleString("es-ES", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
+
+                {ticket.historiales.map((h) => {
+                  const usuario = h.usuario || {};
+                  const nombre = `${usuario.nombre || ""} ${usuario.apellidos || ""}`;
+                  const perfil = usuario.perfil?.nombre || "";
+                  const fecha = new Date(h.fecha).toLocaleString("es-ES");
+
                   return (
-                    <li key={i} className="mb-3">
+                    <li key={h.id} className="mb-3">
                       🎫 <strong>{nombre} ({perfil}) · {h.detalles} · {fecha}</strong>
                     </li>
                   );
@@ -163,21 +154,21 @@ const DetallesTicketSolicitante = () => {
             </div>
           )}
 
-          {/* Crear nuevo mensaje */}
+          {/* ESCRIBIR MENSAJE */}
           <div className="d-flex flex-column mt-3">
             <textarea
               className="form-control mb-2"
               rows="3"
               placeholder="Escribe un mensaje para el técnico..."
-              style={{ resize: "none" }}
               value={descripcionMensaje}
               onChange={(e) => setDescripcionMensaje(e.target.value)}
-            ></textarea>
+              style={{ resize: "none" }}
+            />
 
             <div className="text-center">
               <button
                 className="btn btn-success"
-                style={{ maxWidth: "200px", width: "100%" }}
+                style={{ width: "180px" }}
                 onClick={crearMensaje}
               >
                 Enviar
@@ -185,19 +176,24 @@ const DetallesTicketSolicitante = () => {
             </div>
           </div>
         </div>
-        {/* Columna derecha (solo lectura) */}
+
+        {/* DERECHA: SOLO LECTURA */}
         <div className="col-md-4 ticket-detalles">
-          <h2 style={{ textAlign: "center" }}>Detalles del ticket</h2>
+          <h2 className="text-center">Detalles del ticket</h2>
+
           <div className="mt-4">
             <p><strong>Urgencia:</strong> {ticket.urgencia || "No asignada"}</p>
             <p><strong>Impacto:</strong> {ticket.impacto || "No asignado"}</p>
             <p><strong>Prioridad:</strong> {ticket.prioridad || "No asignada"}</p>
-            <p><strong>Técnico asignado:</strong> {ticket.grupo || "Sin asignar"}</p>
+            <p><strong>Grupo:</strong> {ticket.grupo?.nombre || "Sin asignar"}</p>
+            <p><strong>Técnico asignado:</strong> {ticket.tecnico?.nombre || "Sin asignar"}</p>
           </div>
         </div>
+
       </div>
     </div>
   );
 };
 
 export default DetallesTicketSolicitante;
+

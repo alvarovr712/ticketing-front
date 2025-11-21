@@ -100,24 +100,7 @@ const TicketSolicitante = () => {
         </button>
       </div>
 
-      {/* LISTADO DE TICKETS */}
-      <h4 className="mb-3">Mis tickets enviados</h4>
-      {tickets.length === 0 ? (
-        <p>No has creado ningún ticket todavía.</p>
-      ) : (
-        <ul className="list-group">
-          {tickets.map((ticket) => (
-            <li key={ticket.id} className="list-group-item">
-              <h5>{ticket.asunto}</h5>
-              <p>{ticket.descripcion}</p>
-              <small>
-                Estado: <strong>{ticket.estado}</strong> · Creado el{" "}
-                {new Date(ticket.fechaCreacion).toLocaleString("es-ES")}
-              </small>
-            </li>
-          ))}
-        </ul>
-      )}
+  
     </div>
   );
 };

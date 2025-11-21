@@ -21,6 +21,8 @@ import TecnicoHistorialTickets from "./vistas/tecnico/TecnicoHistorialTickets";
 import TecnicoDetallesTicket from "./vistas/tecnico/TecnicoDetallesTicket";
 import AgenteWorkspace from "./vistas/agente/AgenteWorkspace";
 import TecnicoWorkspace from "./vistas/tecnico/TecnicoWorkspace";
+import TicketHistorial from "./vistas/solicitante/TicketHistorial";
+
 
 function App() {
 	return (
@@ -47,11 +49,13 @@ function App() {
 					<Route path="workspace" element={<AgenteWorkspace/>}/>
 				</Route>
 
-				{/* SOLICITANTE */}
-				<Route path="/solicitante" element={<Solicitante />}>
-					<Route path="tickets" element={<TicketSolicitante />} />
-					<Route path="tickets/:id" element={<DetallesTicketSolicitante />} />
-				</Route>
+      {/* SOLICITANTE */}
+      <Route path="/solicitante" element={<Solicitante />}>
+          <Route path="tickets" element={<TicketSolicitante />} />
+          <Route path="historial" element={<TicketHistorial />} />
+          <Route path="tickets/:id" element={<DetallesTicketSolicitante />} />
+      </Route>
+
 
 
 				{/* TECNICO */}
