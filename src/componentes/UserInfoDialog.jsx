@@ -54,7 +54,8 @@ const userInfoDialog = ({ user, open, close }) => {
 	}
 
 	const handleChosenGrupo = (event) => {
-		setUserData({ ...userData, grupo: event.target.value });
+		console.log(userData)
+		setUserData({ ...userData, idGrupo: event.target.value });
 	}
 
 	useEffect(() => {
