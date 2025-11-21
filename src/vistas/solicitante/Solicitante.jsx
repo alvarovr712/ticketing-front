@@ -9,7 +9,7 @@ const Solicitante = () => {
     const contenidoMenu = [
 
         {nombre:'Tickets', ruta:'/solicitante/tickets', icono:'🎫'},
-        {nombre:'Historial Tickets', ruta:'/solicitante/historial', icono:'🕝'}
+        {nombre:'Tickets Enviados', ruta:'/solicitante/historial', icono:'🕝'}
 
     ];
 
