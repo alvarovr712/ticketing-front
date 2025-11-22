@@ -54,6 +54,17 @@ export const nuevoUsuario = async (token, usuario) => {
 
 	return response.ok;
 }
+export const cambiarEstadoUsuario = async (token, id) => {
+	const response = await fetch(`${BASE_URL}/usuario/${id}/estado`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`
+		}
+	})
+
+	return response.ok;
+}
 
 // OBTENER TODOS LOS USUARIOS DE UN GRUPO
 

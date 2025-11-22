@@ -13,7 +13,6 @@ import Tecnico from "./vistas/tecnico/Tecnico";
 import AgenteTickets from "./vistas/agente/AgenteTickets";
 import DetallesTicket from "./vistas/agente/DetallesTicket";
 import Usuarios from "./vistas/administrador/Usuarios";
-import TicketsUsuario from "./vistas/administrador/TicketUsuario"; 
 import ThemeToggleButton from './componentes/ThemeToggleButton';
 import AgenteHistorialTickets from "./vistas/agente/AgenteHistorialTickets";
 import TecnicoTickets from "./vistas/tecnico/TecnicoTickets";
@@ -35,7 +34,6 @@ function App() {
 				{/* ADMINISTRADOR */}
 				<Route path="/administrador" element={<Administrador />}>
 					<Route path="usuarios" element={<Usuarios />} />
-					<Route path="usuarios/:usuarioId" element={<TicketsUsuario />} />
 					<Route path="tickets" element={<AgenteTickets />} />
 					<Route path="tickets/:id" element={<DetallesTicket />} />
 				</Route>

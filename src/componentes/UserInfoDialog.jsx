@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { actualizarUsuario } from "../api/Usuarios";
 
 const userInfoDialog = ({ user, open, close }) => {
-	const [userData, setUserData] = useState({ ...user });
+	const [userData, setUserData] = useState(null);
 	const [grupos, setGrupos] = useState(localStorage.getItem('grupos') ? JSON.parse(localStorage.getItem('grupos')) : []);
 	const [boxSize, setBoxSize] = useState(6);
 	const [esSolicitante, setEsSolicitante] = useState(false);
@@ -26,11 +26,13 @@ const userInfoDialog = ({ user, open, close }) => {
 			"SOLICITANTE": 4,
 		}
 
-		userData.perfil = perfiles[userData.perfil];
+		const payload = { ...userData, perfil: perfiles[userData.perfil] }
 
-		console.log("Guardando usuario...", userData);
+		setUserData(payload);
 
-		actualizarUsuario(localStorage.getItem('token'), userData.id, userData)
+		console.log("Guardando usuario...", payload);
+
+		actualizarUsuario(localStorage.getItem('token'), payload.id, payload)
 			.then((ok) => {
 				if (ok) {
 					console.log("Usuario actualizado correctamente.");
@@ -57,8 +59,11 @@ const userInfoDialog = ({ user, open, close }) => {
 		console.log(userData)
 		setUserData({ ...userData, idGrupo: event.target.value });
 	}
-
 	useEffect(() => {
+		if (!user) return;
+
+		setUserData({ ...user });
+
 		if (user.perfil === 'SOLICITANTE') {
 			setEsSolicitante(true);
 			setBoxSize(4);
@@ -67,6 +72,8 @@ const userInfoDialog = ({ user, open, close }) => {
 			setBoxSize(6);
 		}
 	}, [user]);
+
+	
 
 	useEffect(() => {
 		setReadOnly(!editMode);

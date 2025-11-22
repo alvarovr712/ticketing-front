@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import UserInfoDialog from "../../componentes/UserInfoDialog";
 import NewUserDialog from "../../componentes/NewUserDialog";
-import { getUsuario, getUsuarios } from "../../api/Usuarios";
+import { cambiarEstadoUsuario, getUsuario, getUsuarios } from "../../api/Usuarios";
 import Tabla from "../../componentes/Tabla";
 import { Button, Chip } from "@mui/material";
 import { getGrupos } from "../../api/Grupos";
@@ -42,6 +42,46 @@ const Usuarios = () => {
 		.catch(err => console.log(err));
 	}
 
+	const handleCloseUserInfoDialog = () => {
+		setOpenUserInfoDialog(false);
+
+		const token = localStorage.getItem('token');
+
+		getUsuarios(token)
+		.then(usuarios  =>  setUsuarios(usuarios))
+		.catch(err => console.log(err));
+	}
+
+	const handleCloseNewUserDialog = () => {
+		setOpenNewUserDialog(false);
+
+		const token = localStorage.getItem('token');
+
+		getUsuarios(token)
+		.then(usuarios  =>  setUsuarios(usuarios))
+		.catch(err => console.log(err));
+	}
+
+	const changeUserState = async id => {
+		console.log("Cambiando estado del usuario con id:", id);
+
+		cambiarEstadoUsuario(localStorage.getItem('token'), id)
+		.then(ok => {
+			if (ok) {
+				console.log("Estado del usuario cambiado correctamente.");	
+				const token = localStorage.getItem('token');
+
+				getUsuarios(token)
+				.then(usuarios  =>  setUsuarios(usuarios))
+				.catch(err => console.log(err));
+			} else {
+				console.log("Error al cambiar el estado del usuario.");
+			}
+		})
+		.catch(err => console.log(err));
+		
+	}
+
 	const columns = 
 	[
 		{
@@ -56,10 +96,10 @@ const Usuarios = () => {
 		{
 			key: "activo",
 			label: "Activo",
-			render: (valor) => 
+			render: (valor, {id}) => 
 				(valor 
-				? <Chip label="Activo" color="success" /> 
-				: <Chip label="Desactivado" color="error" />)
+				? <Chip label="Activo" color="success" onClick={() => changeUserState(id)} /> 
+				: <Chip label="Desactivado" color="error" onClick={() => changeUserState(id)} />)
 		}
 	]
 
@@ -75,13 +115,13 @@ const Usuarios = () => {
 
 			<UserInfoDialog 
 				open={openUserInfoDialog} 
-				close={() => setOpenUserInfoDialog(false)} 
+				close={() => handleCloseUserInfoDialog(false)} 
 				user={user}
 			/>
 
 			<NewUserDialog 
 				open={openNewUserDialog} 
-				close={() => setOpenNewUserDialog(false)}
+				close={() => handleCloseNewUserDialog()}
 			/>
 		</div>
 		
