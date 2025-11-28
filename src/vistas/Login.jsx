@@ -1,34 +1,52 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUsuario } from "../api/Login";
-import "../estilos/Login.css"
+import { useAuth } from "../context/AuthContext";
+import "../estilos/Login.css";
 
 const Login = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [mensaje, setMensaje] = useState('');
     const [tipoMensaje, setTipoMensaje] = useState('');
     const [mostrarMensaje, setMostrarMensaje] = useState(false);
+    const [mostrarModalRecuperar, setMostrarModalRecuperar] = useState(false);
+    const [emailRecuperacion, setEmailRecuperacion] = useState("");
 
     const iniciarSesion = async () => {
         try {
             localStorage.clear();
 
-            //Llamamos a la funcion de loginUsuario que se encuentra en la carpeta api
+
             const datos = await loginUsuario(email, password);
             const perfil = datos.id_perfil;
 
-            //Guardamos los datos que queremos al logear en el localStorage para usarlos luego
             localStorage.setItem('token', datos.token);
             localStorage.setItem('nombre', datos.nombre);
             localStorage.setItem('perfil', datos.id_perfil);
             localStorage.setItem('email', datos.email);
             localStorage.setItem('id_grupo', datos.id_grupo)
             localStorage.setItem('id_usuario', datos.id_usuario)
+
+
+
+            login({
+                token: datos.token,
+                user: {
+                    nombre: datos.nombre,
+                    role: perfil === 1 ? "admin"
+                        : perfil === 2 ? "tecnico"
+                            : perfil === 3 ? "agente"
+                                : "solicitante",
+                    email: datos.email,
+                    id_grupo: datos.id_grupo,
+                    id_usuario: datos.id_usuario
+                }
+            });
 
             setMensaje('✅ Login correcto');
             setTipoMensaje('ok');
@@ -45,6 +63,12 @@ const Login = () => {
             setTipoMensaje('error');
             setMostrarMensaje(true);
         }
+    };
+    const enviarRecuperacion = () => {
+        console.log("Email para recuperar contraseña:", emailRecuperacion);
+        // Aqui va la logica de recuperacion de contraseña
+        setMostrarModalRecuperar(false);
+        setEmailRecuperacion("");
     };
 
     return (
@@ -87,10 +111,41 @@ const Login = () => {
                 <button onClick={iniciarSesion} className="btn btn-morado w-100">
                     Iniciar sesión
                 </button>
+                <p
+                    className="text-center mt-3 text-primary"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setMostrarModalRecuperar(true)}
+                >
+                    ¿Has olvidado la contraseña?
+                </p>
             </div>
+            {mostrarModalRecuperar && (
+                <div className="modal-backdrop d-flex justify-content-center align-items-center">
+                    <div className="bg-white p-4 rounded shadow" style={{ width: "300px" }}>
+                        <h5 className="text-center mb-3">Recuperar contraseña</h5>
+                        <input
+                            type="email"
+                            className="form-control mb-3"
+                            value={emailRecuperacion}
+                            onChange={e => setEmailRecuperacion(e.target.value)}
+                            placeholder="Introduce tu email"
+                        />
+                        <div className="d-flex justify-content-between">
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setMostrarModalRecuperar(false)}
+                            >
+                                Cancelar
+                            </button>
+                            <button className="btn btn-primary" onClick={enviarRecuperacion}>
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-
 };
 
 export default Login;

@@ -23,6 +23,8 @@ import TecnicoWorkspace from "./vistas/tecnico/TecnicoWorkspace";
 import TicketHistorial from "./vistas/solicitante/TicketHistorial";
 import AdminTickets from "./vistas/administrador/AdminTickets";
 
+import ProtectedRoute from "./componentes/ProtectedRoute";
+import AccesoDenegado from "./vistas/AccesoDenegado";
 
 function App() {
 	return (
@@ -31,15 +33,20 @@ function App() {
 			<Routes>
 				{/* LOGIN */}
 				<Route path="/" element={<Login />} />
+				<Route path="/acceso-denegado" element={<AccesoDenegado />} />
 
 				{/* ADMINISTRADOR */}
+				<Route element={<ProtectedRoute roles={["admin"]} redirectTo="/" />}>
 				<Route path="/administrador" element={<Administrador />}>
 					<Route path="usuarios" element={<Usuarios />} />
 					<Route path="tickets" element={<AdminTickets />} />
 					<Route path="tickets/:id" element={<DetallesTicket/>} />
+					<Route path="historial" element={<AgenteHistorialTickets />} />
+				</Route>
 				</Route>
 
 				{/* AGENTE */}
+				<Route element={<ProtectedRoute roles={["agente"]} redirectTo="/" />}>
 				<Route path="/agente" element={<Agente />}>
 					<Route path="tickets" element={<AgenteTickets />} />
 					<Route index element={<AgenteTickets />} />
@@ -47,21 +54,26 @@ function App() {
 					<Route path="historial" element={<AgenteHistorialTickets />} />
 					<Route path="workspace" element={<AgenteWorkspace />} />
 				</Route>
+				</Route>
 
 				{/* SOLICITANTE */}
+				<Route element={<ProtectedRoute roles={["solicitante"]} redirectTo="/" />}>	
 				<Route path="/solicitante" element={<Solicitante />}>
 					<Route path="tickets" element={<TicketSolicitante />} />
 					<Route path="historial" element={<TicketHistorial />} />
 					<Route path="tickets/:id" element={<DetallesTicketSolicitante />} />
 				</Route>
+				</Route>
 
 				{/* TECNICO */}
+				<Route element={<ProtectedRoute roles={["tecnico"]} redirectTo="/" />}>
 				<Route path="/tecnico" element={<Tecnico />} >
 					<Route path="tickets" element={<TecnicoTickets />} />
 					<Route path="historial" element={<TecnicoHistorialTickets />} />
 					<Route path="tickets/:id" element={<TecnicoDetallesTicket />} />
 					<Route path="workspace" element={<TecnicoWorkspace />} />
 
+				</Route>
 				</Route>
 
 			</Routes>
