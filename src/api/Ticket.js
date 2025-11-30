@@ -293,6 +293,36 @@ export const dropearTicketTecnico = async (token, id_ticket) => {
   return await respuesta.text(); 
 };
 
+export const filtrarTicketsPorAsunto = async (token, asunto) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/asunto?asunto=${asunto}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!respuesta.ok) {
+        throw new Error('Error al filtrar tickets por asunto');
+    }
+    return await respuesta.json();
+};
+
+export const filtrarTicketsPorFechas = async (token, fechaInicio, fechaFin) => {
+    const respuesta = await fetch(`${BASE_URL}/ticket/fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!respuesta.ok) {
+        throw new Error('Error al filtrar tickets por fechas');
+    }
+    return await respuesta.json();
+};
+
 
 
 

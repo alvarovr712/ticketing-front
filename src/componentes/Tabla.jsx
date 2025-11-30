@@ -1,9 +1,9 @@
 import '../estilos/Tabla.css';
 
-//Con datalabel lo que consigo hacer la tabla responsive para moviles y queda en forma de card.
-//Con render consigo insertar en la tabla el valor o componente que quiera y que se visuali
+// Con datalabel lo que consigo hacer la tabla responsive para moviles y queda en forma de card.
+// Con render consigo insertar en la tabla el valor o componente que quiera y que se visualice
 
-const Tabla = ({ datos, columnas, mostrarDescripcion = false }) => {
+const Tabla = ({ datos, columnas, mostrarDescripcion = false, resaltarUrgentes = true }) => {
 
     return (
         <table className="tabla">
@@ -16,10 +16,9 @@ const Tabla = ({ datos, columnas, mostrarDescripcion = false }) => {
                 {datos.map((fila, index) => (
                     <tr
                         key={fila.id || index}
-                        className={`tr-tooltip ${fila.prioridad?.toLowerCase() === "urgente" ? "fila-urgente" : ""}`}
+                        className={`tr-tooltip ${resaltarUrgentes && fila.prioridad?.toLowerCase() === "urgente" ? "fila-urgente" : ""}`}
                         {...(mostrarDescripcion && { 'data-tooltip': fila.descripcion || "Sin descripción" })}
                     >
-
                         {columnas.map(col => (
                             <td key={col.key} data-label={col.label}>
                                 {col.render ? col.render(fila[col.key], fila) : fila[col.key]}
