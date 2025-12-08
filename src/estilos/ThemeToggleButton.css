@@ -30,3 +30,11 @@ body:not(.dark-mode) .btn-theme-toggle {
 body:not(.dark-mode) .btn-theme-toggle:hover {
     background-color: #cbd5e0;
 }
+
+.light-container .link-asunto {
+  color: #000; 
+}
+
+.dark-container .link-asunto {
+  color: #f5f5f5; 
+}

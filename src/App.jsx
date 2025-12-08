@@ -38,6 +38,7 @@ function App() {
 				{/* ADMINISTRADOR */}
 				<Route element={<ProtectedRoute roles={["admin"]} redirectTo="/" />}>
 				<Route path="/administrador" element={<Administrador />}>
+				<Route index element={<Usuarios />} />
 					<Route path="usuarios" element={<Usuarios />} />
 					<Route path="tickets" element={<AdminTickets />} />
 					<Route path="tickets/:id" element={<DetallesTicket/>} />

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { obtenerTicketsResueltos, filtrarTicketsPorAsunto, filtrarTicketsPorFechas } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
 import { Link } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
+import "../../estilos/ThemeToggleButton.css";
 
 const AgenteHistorialTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -11,6 +13,8 @@ const AgenteHistorialTickets = () => {
   const [asunto, setAsunto] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+
+   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -61,8 +65,8 @@ const AgenteHistorialTickets = () => {
       label: "Asunto",
       render: (valor, fila) => (
         <Link
-          to={`/agente/tickets/${fila.id}`}
-          style={{ color: "black", textDecoration: "none", fontWeight: "bold" }}
+          to={`/agente/tickets/${fila.id}`} className="link-asunto"
+          style={{  textDecoration: "none", fontWeight: "bold" }}
         >
           {valor}
         </Link>
@@ -98,7 +102,7 @@ const AgenteHistorialTickets = () => {
   ];
 
   return (
-    <div className="container mt-4">
+    <div className={theme === "dark" ? "dark-container" : "light-container"}>
       <h2>Tickets Resueltos</h2>
       <br />
 

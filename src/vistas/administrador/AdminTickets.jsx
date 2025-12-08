@@ -3,10 +3,14 @@ import { asignarTicket, desasignarTicket, obtenerTodosLosTickets } from "../../a
 import Tabla from "../../componentes/Tabla";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
+import { useTheme } from "../../context/ThemeContext";
+import "../../estilos/ThemeToggleButton.css";
 
 const AdminTickets = () => {
 	const [tickets, setTickets] = useState([]);
 	const [error, setError] = useState("");
+
+	   const { theme, toggleTheme } = useTheme();
 
 
 
@@ -40,8 +44,8 @@ const AdminTickets = () => {
 			key: "asunto",
 			label: "Asunto",
 			render: (_, { id, asunto }) => (
-				<Link to={`/administrador/tickets/${id}`}>
-					<Button variant="text">{asunto}</Button>
+				<Link to={`/administrador/tickets/${id}`} className="link-asunto" style={{ textDecoration: "none" }}>
+					{asunto}
 				</Link>
 			)
 		},
@@ -87,7 +91,7 @@ const AdminTickets = () => {
 	});
 
 	return (
-		<div className="container my-4">
+		<div className={theme === "dark" ? "dark-container" : "light-container"}>
 			<h2>Tickets</h2>
 
 			{error && <p style={{ color: "red" }}>{error}</p>}

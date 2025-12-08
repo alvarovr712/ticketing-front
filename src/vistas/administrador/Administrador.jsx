@@ -8,8 +8,7 @@ const Administrador = () => {
     const navigate = useNavigate();
 
     const contenidoMenu = [
-
-        { nombre: 'Inicio', ruta: '/administrador', icono: '🏠' },
+  
         { nombre: 'Usuarios', ruta: '/administrador/usuarios', icono: '👥' },
         { nombre: 'Tickets', ruta: '/administrador/tickets', icono: '🎫' },
         {nombre: 'Historial Tickets', ruta: '/administrador/historial', icono: '🕜'}

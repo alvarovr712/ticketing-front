@@ -2,11 +2,14 @@ import { useEffect, useState } from "react"
 import { obtenerTicketsPorGrupoResueltos } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
 import { Link } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
+import "../../estilos/ThemeToggleButton.css";
 
 const TecnicoHistorialTickets = () => {
 
     const [tickets, setTickets] = useState([]);
     const [error, setError] = useState("");
+    const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -22,7 +25,7 @@ const TecnicoHistorialTickets = () => {
         {
             key: "asunto", label: "Asunto",
             render: (valor, fila) => (
-                <Link to={`/tecnico/tickets/${fila.id}`} style={{ color: "black", textDecoration: "none", fontWeight: "bold" }}>
+                <Link to={`/tecnico/tickets/${fila.id}`}  className="link-asunto" style={{ textDecoration: "none", fontWeight: "bold" }}>
                     {valor}
                 </Link>
             )
@@ -73,7 +76,7 @@ const TecnicoHistorialTickets = () => {
 
 
     return (
-        <div>
+        <div className={theme === "dark" ? "dark-container" : "light-container"}>
             <h2>Tickets</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <Tabla datos={tickets} columnas={columnas} />

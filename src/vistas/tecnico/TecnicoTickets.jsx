@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { asignarTicketTecnico, desasignarTicketTecnico, obtenerTicketPorGrupo } from "../../api/Ticket";
 import Tabla from "../../componentes/Tabla";
 import { Link } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
+import "../../estilos/ThemeToggleButton.css";
 
 const TecnicoTickets = () => {
 
@@ -11,6 +13,7 @@ const TecnicoTickets = () => {
 
   const token = localStorage.getItem('token');
   const id_grupo = localStorage.getItem('id_grupo');
+  const { theme, toggleTheme } = useTheme();
 
  
   const cargarTickets = () => {
@@ -64,7 +67,7 @@ const TecnicoTickets = () => {
       key: "asunto",
       label: "Asunto",
       render: (valor, fila) => (
-        <Link to={`${fila.id}`} style={{ color: "black", textDecoration: "none", fontWeight: "bold" }}>
+        <Link to={`${fila.id}`} className="link-asunto" style={{ textDecoration: "none", fontWeight: "bold" }}>
           {valor}
         </Link>
       )
@@ -124,8 +127,10 @@ const TecnicoTickets = () => {
     return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
   });
 
+
+
   return (
-    <div>
+     <div className={theme === "dark" ? "dark-container" : "light-container"}>
       <h2>Tickets</h2>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

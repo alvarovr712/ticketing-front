@@ -72,80 +72,84 @@ const Login = () => {
     };
 
     return (
-        <div className="vh-100 d-flex justify-content-center align-items-center fondo-login">
-            <div className="bg-white p-5 rounded shadow login-card">
-                <h1 className="text-center text-primary mb-3 fs-2">🎟️ Helpdesk</h1>
-                <p className="text-center text-muted mb-4">
-                    Accede a tu cuenta para gestionar tus tickets
-                </p>
+  <div className="vh-100 d-flex justify-content-center align-items-center fondo-login">
+    <div className="bg-white p-5 rounded shadow login-card">
+      <h1 className="text-center text-primary mb-3 fs-2">🎟️ Helpdesk</h1>
+      <p className="text-center text-muted mb-4">
+        Accede a tu cuenta para gestionar tus tickets
+      </p>
 
-                <input
-                    type="email"
-                    className="form-control mb-3"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="Email"
-                />
+      <form onSubmit={(e) => { e.preventDefault(); iniciarSesion(); }}>
+        <input
+          type="email"
+          className="form-control mb-3"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Email"
+        />
 
-                <input
-                    type="password"
-                    className="form-control mb-4"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="Contraseña"
-                />
+        <input
+          type="password"
+          className="form-control mb-4"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="Contraseña"
+        />
 
-                {mostrarMensaje && (
-                    <div className="modal-backdrop d-flex justify-content-center align-items-center">
-                        <div className={`alert ${tipoMensaje === 'ok' ? 'alert-success' : 'alert-danger'} text-center p-4 rounded`}>
-                            <p>{mensaje}</p>
-                            {tipoMensaje === 'error' && (
-                                <button className="btn btn-danger mt-3" onClick={() => setMostrarMensaje(false)}>
-                                    Aceptar
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                <button onClick={iniciarSesion} className="btn btn-morado w-100">
-                    Iniciar sesión
+        {mostrarMensaje && (
+          <div className="modal-backdrop d-flex justify-content-center align-items-center">
+            <div className={`alert ${tipoMensaje === 'ok' ? 'alert-success' : 'alert-danger'} text-center p-4 rounded`}>
+              <p>{mensaje}</p>
+              {tipoMensaje === 'error' && (
+                <button className="btn btn-danger mt-3" onClick={() => setMostrarMensaje(false)}>
+                  Aceptar
                 </button>
-                <p
-                    className="text-center mt-3 text-primary"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setMostrarModalRecuperar(true)}
-                >
-                    ¿Has olvidado la contraseña?
-                </p>
+              )}
             </div>
-            {mostrarModalRecuperar && (
-                <div className="modal-backdrop d-flex justify-content-center align-items-center">
-                    <div className="bg-white p-4 rounded shadow" style={{ width: "300px" }}>
-                        <h5 className="text-center mb-3">Recuperar contraseña</h5>
-                        <input
-                            type="email"
-                            className="form-control mb-3"
-                            value={emailRecuperacion}
-                            onChange={e => setEmailRecuperacion(e.target.value)}
-                            placeholder="Introduce tu email"
-                        />
-                        <div className="d-flex justify-content-between">
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() => setMostrarModalRecuperar(false)}
-                            >
-                                Cancelar
-                            </button>
-                            <button className="btn btn-primary" onClick={enviarRecuperacion}>
-                                Enviar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+          </div>
+        )}
+
+        <button type="submit" className="btn btn-morado w-100">
+          Iniciar sesión
+        </button>
+      </form>
+
+      <p
+        className="text-center mt-3 text-primary"
+        style={{ cursor: "pointer" }}
+        onClick={() => setMostrarModalRecuperar(true)}
+      >
+        ¿Has olvidado la contraseña?
+      </p>
+    </div>
+    {mostrarModalRecuperar && (
+      <div className="modal-backdrop d-flex justify-content-center align-items-center">
+        <div className="bg-white p-4 rounded shadow" style={{ width: "300px" }}>
+          <h5 className="text-center mb-3">Recuperar contraseña</h5>
+          <input
+            type="email"
+            className="form-control mb-3"
+            value={emailRecuperacion}
+            onChange={e => setEmailRecuperacion(e.target.value)}
+            placeholder="Introduce tu email"
+          />
+          <div className="d-flex justify-content-between">
+            <button
+              className="btn btn-secondary"
+              onClick={() => setMostrarModalRecuperar(false)}
+            >
+              Cancelar
+            </button>
+            <button className="btn btn-primary" onClick={enviarRecuperacion}>
+              Enviar
+            </button>
+          </div>
         </div>
-    );
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default Login;
