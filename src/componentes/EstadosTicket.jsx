@@ -80,7 +80,7 @@ const EstadosTicket = ({
                         value={grupo}
                         onChange={(e) => {
                             setModificado(true);
-                            setGrupo(e.target.value); 
+                            setGrupo(e.target.value);
                             verUsuariosGrupo(e);
                         }}
                     >
@@ -100,7 +100,11 @@ const EstadosTicket = ({
                         id="usuario"
                         className="form-select"
                         value={usuarioSeleccionado}
-                        onChange={(e) => setUsuarioSeleccionado(e.target.value)}
+                        onChange={(e) => {
+                            setUsuarioSeleccionado(e.target.value);
+                            setModificado(true); 
+                        }}
+
                     >
                         <option value="">Selecciona un responsable</option>
                         {usuariosGrupo.map((usuario) => (

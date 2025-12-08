@@ -148,7 +148,7 @@ const DetallesTicket = () => {
             setTimeout(() => setMensaje(""), 3000);
         } catch (error) {
             console.error("Error al modificar el ticket:", error.response?.data || error.message);
-            setError("Error al modificar el ticket");
+            
         }
     };
 
