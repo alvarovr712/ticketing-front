@@ -79,7 +79,7 @@ const TecnicoHistorialTickets = () => {
         <div className={theme === "dark" ? "dark-container" : "light-container"}>
             <h2>Tickets</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <Tabla datos={tickets} columnas={columnas} />
+            <Tabla datos={tickets} columnas={columnas} resaltarUrgentes={false}/>
         </div>
     )
 }
