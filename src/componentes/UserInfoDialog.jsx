@@ -59,6 +59,8 @@ const userInfoDialog = ({ user, open, close }) => {
 		console.log(userData)
 		setUserData({ ...userData, idGrupo: event.target.value });
 	}
+
+
 	useEffect(() => {
 		if (!user) return;
 
@@ -71,7 +73,12 @@ const userInfoDialog = ({ user, open, close }) => {
 		}
 	}, [user]);
 
-	
+	useEffect(() => {
+		if (open && user) {
+			setUserData({ ...user });
+			setEditMode(false);
+		}
+	}, [user, open]);
 
 	useEffect(() => {
 		setReadOnly(!editMode);

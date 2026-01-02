@@ -115,7 +115,7 @@ const Usuarios = () => {
 
 			<UserInfoDialog 
 				open={openUserInfoDialog} 
-				close={() => handleCloseUserInfoDialog(false)} 
+				close={handleCloseUserInfoDialog} 
 				user={user}
 			/>
 

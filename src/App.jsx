@@ -25,6 +25,7 @@ import AdminTickets from "./vistas/administrador/AdminTickets";
 
 import ProtectedRoute from "./componentes/ProtectedRoute";
 import AccesoDenegado from "./vistas/AccesoDenegado";
+import ResetPassword from "./vistas/ResetPassword";
 
 function App() {
 	return (
@@ -34,6 +35,7 @@ function App() {
 				{/* LOGIN */}
 				<Route path="/" element={<Login />} />
 				<Route path="/acceso-denegado" element={<AccesoDenegado />} />
+				<Route path="/reset-password" element={<ResetPassword/>} />
 
 				{/* ADMINISTRADOR */}
 				<Route element={<ProtectedRoute roles={["admin"]} redirectTo="/" />}>
