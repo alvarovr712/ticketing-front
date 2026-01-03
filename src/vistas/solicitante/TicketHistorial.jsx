@@ -5,289 +5,289 @@ import { useNavigate } from "react-router-dom";
 
 const TicketHistorial = () => {
 
-  const [tickets, setTickets] = useState([]);
+	const [tickets, setTickets] = useState([]);
 
-  const [error, setError] = useState("");
+	const [error, setError] = useState("");
 
-  
 
-  // Estados para los filtros
 
-  const [filtroEstado, setFiltroEstado] = useState("todos"); // Filtro por dropdown (estado)
+	// Estados para los filtros
 
-  const [filtroBusqueda, setFiltroBusqueda] = useState(""); // Filtro por input (texto)
+	const [filtroEstado, setFiltroEstado] = useState("todos"); // Filtro por dropdown (estado)
 
+	const [filtroBusqueda, setFiltroBusqueda] = useState(""); // Filtro por input (texto)
 
-  const navigate = useNavigate();
 
+	const navigate = useNavigate();
 
-  const cargarTickets = async () => {
 
-    try {
+	const cargarTickets = async () => {
 
-      const token = localStorage.getItem("token");
+		try {
 
-      const response = await fetch("http://localhost:8080/api/solicitante/tickets", {
+			const token = localStorage.getItem("token");
 
-        headers: { Authorization: `Bearer ${token}` },
+			const response = await fetch("http://localhost:8080/api/solicitante/tickets", {
 
-      });
+				headers: { Authorization: `Bearer ${token}` },
 
+			});
 
-      if (!response.ok) throw new Error("Error al obtener tickets");
 
+			if (!response.ok) throw new Error("Error al obtener tickets");
 
-      const data = await response.json();
 
-      setTickets(data);
+			const data = await response.json();
 
-    } catch (err) {
+			setTickets(data);
 
-      setError(err.message);
+		} catch (err) {
 
-    }
+			setError(err.message);
 
-  };
+		}
 
+	};
 
-  useEffect(() => {
 
-    cargarTickets();
+	useEffect(() => {
 
-  }, []);
+		cargarTickets();
 
+	}, []);
 
-// Función para asignar color según el estado
 
-const estadoColor = (estado) => {
+	// Función para asignar color según el estado
 
-  if (!estado) return "badge bg-light text-dark";
+	const estadoColor = (estado) => {
 
+		if (!estado) return "badge bg-light text-dark";
 
-  switch (estado.toLowerCase()) {
 
-    case "abierto":
+		switch (estado.toLowerCase()) {
 
-      return "badge bg-primary";
+			case "abierto":
 
-    case "en proceso":
+				return "badge bg-primary";
 
-      return "badge bg-warning text-dark";
+			case "en proceso":
 
-    case "resuelto":
+				return "badge bg-warning text-dark";
 
-      return "badge bg-success";
+			case "resuelto":
 
-    case "cerrado":
+				return "badge bg-success";
 
-      return "badge bg-secondary";
+			case "cerrado":
 
-    default:
+				return "badge bg-secondary";
 
-      return "badge bg-light text-dark";
+			default:
 
-  }
+				return "badge bg-light text-dark";
 
-};
+		}
 
+	};
 
-// Hook para aplicar los filtros de forma eficiente
 
-const ticketsFiltrados = useMemo(() => {
+	// Hook para aplicar los filtros de forma eficiente
 
-    const busquedaLower = filtroBusqueda.toLowerCase();
+	const ticketsFiltrados = useMemo(() => {
 
+		const busquedaLower = filtroBusqueda.toLowerCase();
 
-    return tickets.filter(ticket => {
 
-        // 1. Filtrar por Estado
+		return tickets.filter(ticket => {
 
-        const coincideEstado = 
+			// 1. Filtrar por Estado
 
-            filtroEstado === "todos" || 
+			const coincideEstado =
 
-            (ticket.estado && ticket.estado.toLowerCase() === filtroEstado);
+				filtroEstado === "todos" ||
 
+				(ticket.estadoTicket && ticket.estadoTicket.toLowerCase() === filtroEstado);
 
-        // 2. Filtrar por Búsqueda (en Asunto o Descripción)
 
-        const coincideBusqueda = 
+			// 2. Filtrar por Búsqueda (en Asunto o Descripción)
 
-            (ticket.asunto && ticket.asunto.toLowerCase().includes(busquedaLower)) ||
+			const coincideBusqueda =
 
-            (ticket.descripcion && ticket.descripcion.toLowerCase().includes(busquedaLower));
+				(ticket.asunto && ticket.asunto.toLowerCase().includes(busquedaLower)) ||
 
+				(ticket.descripcion && ticket.descripcion.toLowerCase().includes(busquedaLower));
 
-        return coincideEstado && coincideBusqueda;
 
-    });
+			return coincideEstado && coincideBusqueda;
 
-}, [tickets, filtroEstado, filtroBusqueda]);
+		});
 
+	}, [tickets, filtroEstado, filtroBusqueda]);
 
-// Lista de estados para el Dropdown
 
-const estadosDisponibles = ["Todos", "Abierto", "En Proceso", "Resuelto", "Cerrado"];
+	// Lista de estados para el Dropdown
 
+	const estadosDisponibles = ["Todos", "Abierto", "Pendiente", "Resuelto", "Cerrado"];
 
 
-  return (
 
-    <div className="container mt-5">
+	return (
 
-      <h2 className="mb-4 text-center">Historial de Tickets</h2>
+		<div className="container mt-5">
 
+			<h2 className="mb-4 text-center">Historial de Tickets</h2>
 
-      {/* --- CONTROLES DE FILTRO --- */}
 
-      <div className="row mb-4">
+			{/* --- CONTROLES DE FILTRO --- */}
 
-        {/* Filtro por Estado (Dropdown) */}
+			<div className="row mb-4">
 
-        <div className="col-md-4 mb-3">
+				{/* Filtro por Estado (Dropdown) */}
 
-          <label htmlFor="filtroEstado" className="form-label">Filtrar por Estado:</label>
+				<div className="col-md-4 mb-3">
 
-          <select
+					<label htmlFor="filtroEstado" className="form-label">Filtrar por Estado:</label>
 
-            id="filtroEstado"
+					<select
 
-            className="form-select"
+						id="filtroEstado"
 
-            value={filtroEstado}
+						className="form-select"
 
-            onChange={(e) => setFiltroEstado(e.target.value)}
+						value={filtroEstado}
 
-          >
+						onChange={(e) => setFiltroEstado(e.target.value)}
 
-            {estadosDisponibles.map(estado => (
+					>
 
-                <option key={estado} value={estado.toLowerCase()}>
+						{estadosDisponibles.map(estado => (
 
-                    {estado}
+							<option key={estado} value={estado.toLowerCase()}>
 
-                </option>
+								{estado}
 
-            ))}
+							</option>
 
-          </select>
+						))}
 
-        </div>
+					</select>
 
+				</div>
 
-        {/* Filtro por Búsqueda de Texto (Input) */}
 
-        <div className="col-md-8 mb-3">
+				{/* Filtro por Búsqueda de Texto (Input) */}
 
-          <label htmlFor="filtroBusqueda" className="form-label">Buscar (Asunto o Descripción):</label>
+				<div className="col-md-8 mb-3">
 
-          <input
+					<label htmlFor="filtroBusqueda" className="form-label">Buscar (Asunto o Descripción):</label>
 
-            type="text"
+					<input
 
-            id="filtroBusqueda"
+						type="text"
 
-            className="form-control"
+						id="filtroBusqueda"
 
-            placeholder="Buscar tickets por asunto o descripción..."
+						className="form-control"
 
-            value={filtroBusqueda}
+						placeholder="Buscar tickets por asunto o descripción..."
 
-            onChange={(e) => setFiltroBusqueda(e.target.value)}
+						value={filtroBusqueda}
 
-          />
+						onChange={(e) => setFiltroBusqueda(e.target.value)}
 
-        </div>
+					/>
 
-      </div>
+				</div>
 
+			</div>
 
 
 
-      {error && <p className="text-danger">{error}</p>}
 
+			{error && <p className="text-danger">{error}</p>}
 
-      {ticketsFiltrados.length === 0 ? (
 
-        <p className="text-center text-muted">
+			{ticketsFiltrados.length === 0 ? (
 
-            {filtroEstado !== "todos" || filtroBusqueda ? "No se encontraron tickets con esos filtros." : "No has creado ningún ticket todavía."}
+				<p className="text-center text-muted">
 
-        </p>
+					{filtroEstado !== "todos" || filtroBusqueda ? "No se encontraron tickets con esos filtros." : "No has creado ningún ticket todavía."}
 
-      ) : (
+				</p>
 
-        <div className="row">
+			) : (
 
-          {ticketsFiltrados.map((ticket) => ( 
+				<div className="row">
 
-            <div
+					{ticketsFiltrados.map((ticket) => (
 
-              key={ticket.id}
+						<div
 
-              className="col-md-6 col-lg-4 mb-4"
+							key={ticket.id}
 
-            >
+							className="col-md-6 col-lg-4 mb-4"
 
-              <div
+						>
 
-                className="card shadow-sm h-100 cursor-pointer"
+							<div
 
-                style={{ cursor: "pointer", transition: "transform 0.2s" }}
+								className="card shadow-sm h-100 cursor-pointer"
 
-                onClick={() => navigate(`/solicitante/tickets/${ticket.id}`)}
+								style={{ cursor: "pointer", transition: "transform 0.2s" }}
 
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+								onClick={() => navigate(`/solicitante/tickets/${ticket.id}`)}
 
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+								onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
 
-              >
+								onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
 
-                <div className="card-body d-flex flex-column">
+							>
 
-                  <h5 className="card-title">{ticket.asunto}</h5>
+								<div className="card-body d-flex flex-column">
 
-                  <p className="card-text text-truncate" style={{ maxHeight: "4.5em", overflow: "hidden" }}>
+									<h5 className="card-title">{ticket.asunto}</h5>
 
-                    {ticket.descripcion}
+									<p className="card-text text-truncate" style={{ maxHeight: "4.5em", overflow: "hidden" }}>
 
-                  </p>
+										{ticket.descripcion}
 
-                  <div className="mt-auto d-flex justify-content-between align-items-center">
+									</p>
 
-                    <span className={estadoColor(ticket.estado)}>{ticket.estado}</span>
+									<div className="mt-auto d-flex justify-content-between align-items-center">
 
-                    <small className="text-muted">
+										<span className={estadoColor(ticket.estado)}>{ticket.estado}</span>
 
-                      {new Date(ticket.fechaCreacion).toLocaleDateString("es-ES", {
+										<small className="text-muted">
 
-                        day: "2-digit",
+											{new Date(ticket.fechaCreacion).toLocaleDateString("es-ES", {
 
-                        month: "short",
+												day: "2-digit",
 
-                        year: "numeric",
+												month: "short",
 
-                      })}
+												year: "numeric",
 
-                    </small>
+											})}
 
-                  </div>
+										</small>
 
-                </div>
+									</div>
 
-              </div>
+								</div>
 
-            </div>
+							</div>
 
-          ))}
+						</div>
 
-        </div>
+					))}
 
-      )}
+				</div>
 
-    </div>
+			)}
 
-  );
+		</div>
+
+	);
 
 };
 
