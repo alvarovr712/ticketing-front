@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
-import { Button, TextField, Grid } from "@mui/material";
+import { Button, TextField, Box, Card, CardContent, Typography, Snackbar, Alert } from "@mui/material";
 import { resetPassword } from '../api/Login';
 
 export default function ResetPassword() {
@@ -14,65 +14,100 @@ export default function ResetPassword() {
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 
-	const changePassword = () => {
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState('');
+	const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
+
+	const showFeedback = (message, severity) => {
+		setSnackbarMessage(message);
+		setSnackbarSeverity(severity);
+		setOpenSnackbar(true);
+	};
+
+	const changePassword = async () => {
 		if (!token || !email) {
-			alert('Solicitud de restablecimiento de contraseña no válida. El token ha expirado o no es válido');
+			showFeedback('Solicitud de restablecimiento no válida. Token expirado o inválido', 'error');
 			return;
 		}
 
 		if (password !== confirmPassword) {
-			alert('Las contraseñas no coinciden');
+			showFeedback('Las contraseñas no coinciden', 'warning');
 			return;
 		}
 
-		if (resetPassword(password, email, token)) {
-			alert('Contraseña restablecida con éxito');
-
-			navigate("/");
-		} else {
-			alert('No es posible restablecer la contraseña. Token expirado o no válido');
+		try {
+			await resetPassword(password, email, token);
+			showFeedback('Contraseña restablecida con éxito', 'success');
+			setTimeout(() => {
+				navigate("/");
+			}, 2000);
+		} catch (error) {
+			console.error(error);
+			showFeedback('No es posible restablecer la contraseña. Token expirado o no válido', 'error');
 		}
 	}
 
 
 
 	return (
-		<div className="vh-100 d-flex justify-content-center align-items-center">
-			<h1 className="text-center text-primary mb-3 fs-2">Restablece su contraseña</h1>
-
-			<Grid
-				container
-				rowSpacing={2}
-				columnSpacing={2}
-				padding={2}
-				alignItems="center"
-				alignContent={"center"}
-				justifyContent={"center"}
+		<div className="vh-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: "#f4f6f8" }}>
+			<Card sx={{ maxWidth: 350, width: "100%", boxShadow: 3, borderRadius: 2, m: 2 }}>
+				<CardContent sx={{ p: 3 }}>
+					<Typography variant="h6" component="h1" align="center" gutterBottom sx={{ mb: 2, color: "primary.main", fontWeight: "bold" }}>
+						Restablecer Contraseña
+					</Typography>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+						<TextField
+							type="password"
+							label="Nueva Contraseña"
+							fullWidth
+							variant="outlined"
+							size="small"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							InputLabelProps={{ style: { fontSize: '0.9rem' } }}
+							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+						/>
+						<TextField
+							type="password"
+							label="Confirmar Nueva Contraseña"
+							fullWidth
+							variant="outlined"
+							size="small"
+							value={confirmPassword}
+							onChange={(e) => setConfirmPassword(e.target.value)}
+							InputLabelProps={{ style: { fontSize: '0.9rem' } }}
+							sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+						/>
+						<Button
+							variant="contained"
+							size="small"
+							fullWidth
+							sx={{ mt: 1, fontWeight: "bold", borderRadius: 2, paddingY: 1 }}
+							onClick={() => changePassword()}
+						>
+							Aceptar
+						</Button>
+					</Box>
+				</CardContent>
+			</Card>
+			<Snackbar
+				open={openSnackbar}
+				autoHideDuration={6000}
+				onClose={handleCloseSnackbar}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 			>
-				<Grid size={12}>
-					<TextField
-						type="password"
-						label="Nueva Contraseña"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</Grid>
-
-				<Grid size={12}>
-					<TextField
-						type="password"
-						label="Confirmar Nueva Contraseña"
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-					/>
-				</Grid>
-			</Grid>
-
-			<Grid size={12}>
-				<Button variant="contained" onClick={() => changePassword()}>Aceptar</Button>
-			</Grid>
-
-
+				<Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+					{snackbarMessage}
+				</Alert>
+			</Snackbar>
 		</div>
 	)
 }
